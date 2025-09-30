@@ -1,0 +1,62 @@
+unit DAO.Estabelecimento;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
+Dataset.Serialize, DAO.Connection;
+
+type
+  TEstabelecimento = class
+    private
+      FConn: TFDConnection;
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      function Listar(pagina: integer): TJSONArray;
+  end;
+
+implementation
+
+{ TEstabelecimento }
+
+constructor TEstabelecimento.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TEstabelecimento.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+function TEstabelecimento.Listar(cod_cidade: string): TJSONArray;
+var
+  qry: TFDQuery;
+begin
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('select * from tab_banner');
+      SQL.Add('where cod_cidade = :cod_cidade order by ordem');
+
+      ParamByName('cod_cidade').Value := cod_cidade;
+
+      Active := True;
+    end;
+
+    Result := qry.ToJSONArray();
+
+  finally
+    qry.Free;
+  end;
+end;
+
+end.
