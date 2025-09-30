@@ -1,0 +1,10 @@
+unit DAO.Banner;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
+Dataset.Serialize, DAO.Connection;
+
+implementation
+
+end.

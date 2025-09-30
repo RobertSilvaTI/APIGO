@@ -1,0 +1,65 @@
+unit DAO.Categoria;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, FireDAC.Stan.Param, Data.DB, System.JSON,
+System.SysUtils, DataSet.Serialize, DAO.Connection;
+
+type
+  TCategoria = class
+    private
+      FConn: TFDConnection;
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      function Listar(cod_cidade: string): TJSONArray;
+  end;
+
+implementation
+
+{ TCategoria }
+
+constructor TCategoria.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TCategoria.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+function TCategoria.Listar(cod_cidade: string): TJSONArray;
+var
+  qry: TFDQuery;
+begin
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('select * from tab_categoria');
+      SQL.Add('join tab_categoria_cidade');
+      SQL.Add('on tab_categoria_cidade.id_categoria = tab_categoria.id_categoria');
+      SQL.Add('where tab_categoria_cidade.cod_cidade = :cod_cidade');
+      SQL.Add('order by tab_categoria.ordem');
+
+      ParamByName('cod_cidade').Value := cod_cidade;
+
+      Active := True;
+    end;
+
+    Result := qry.ToJSONArray();
+
+  finally
+    qry.Free;
+  end;
+end;
+
+end.

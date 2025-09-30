@@ -1,0 +1,19 @@
+unit DAO.Banner;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
+Dataset.Serialize, DAO.Connection;
+
+type
+  TBanner = class
+    private
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+  end;
+
+implementation
+
+end.
