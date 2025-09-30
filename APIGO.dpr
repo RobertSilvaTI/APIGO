@@ -8,7 +8,8 @@ uses
   DAO.Banner in 'DAO\DAO.Banner.pas',
   DAO.Categoria in 'DAO\DAO.Categoria.pas',
   DAO.Cidade in 'DAO\DAO.Cidade.pas',
-  DAO.Cupom in 'DAO\DAO.Cupom.pas';
+  DAO.Cupom in 'DAO\DAO.Cupom.pas',
+  DAO.Destaque in 'DAO\DAO.Destaque.pas';
 
 {$R *.res}
 

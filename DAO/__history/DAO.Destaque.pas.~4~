@@ -1,0 +1,68 @@
+unit DAO.Destaque;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
+DataSet.Serialize, DAO.Connection;
+
+type
+  TDestaque = class
+    private
+      FConn: TFDConnection;
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      function istar(cod_cidade: string): TJSONArray;
+  end;
+
+implementation
+
+{ TDestaque }
+
+constructor TDestaque.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TDestaque.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+function TDestaque.istar(cod_cidade: string): TJSONArray;
+var
+  qry: TFDQuery;
+begin
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('select * from tab_destaque d');
+      SQL.Add('join tab_destaque_estabelecimento de on de.id_destaque = d.id_destaque');
+      SQL.Add('join tab_estabelecimento e on e.id_estabelecimento = de.id_estabelecimento');
+      SQL.Add('join categoria c on c.id_categoria = e.id_categoria');
+      SQL.Add('where d.ind_ativo = :ind_ativo');
+      SQL.Add('and e.cod_cidade = :cod_cidade');
+      SQL.Add('order by d.ordem');
+
+      ParamByName('ind_ativo').Value := 'S';
+      ParamByName('cod_cidade').Value := cod_cidade;
+
+      Active := True;
+    end;
+
+    Result := qry.ToJSONArray();
+
+  finally
+    FConn.Free;
+  end;
+end;
+
+end.

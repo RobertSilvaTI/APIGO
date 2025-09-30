@@ -1,0 +1,19 @@
+program APIGO;
+
+uses
+  System.StartUpCopy,
+  FMX.Forms,
+  UnitPrincipal in 'UnitPrincipal.pas' {FrmPrincipal},
+  DAO.Connection in 'DAO\DAO.Connection.pas',
+  DAO.Banner in 'DAO\DAO.Banner.pas',
+  DAO.Categoria in 'DAO\DAO.Categoria.pas',
+  DAO.Cidade in 'DAO\DAO.Cidade.pas',
+  DAO.Cupom in 'DAO\DAO.Cupom.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
+  Application.Run;
+end.
