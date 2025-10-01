@@ -1,0 +1,129 @@
+unit DAO.Estabelecimento;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
+Dataset.Serialize, DAO.Connection;
+
+type
+  TEstabelecimento = class
+    private
+      FConn: TFDConnection;
+      FCOD_CIDADE: string;
+      FID_CATEGORIA: integer;
+      FID_ESTABELECIMENTO: integer;
+      FNOME: string;
+      FID_USUARIO: integer;
+      FID_BANNER: integer;
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      property ID_USUARIO: integer read FID_USUARIO write FID_USUARIO;
+      property ID_ESTABELECIMENTO: integer read FID_ESTABELECIMENTO write FID_ESTABELECIMENTO;
+      property ID_CATEGORIA: integer read FID_CATEGORIA write FID_CATEGORIA;
+      property ID_BANNER: integer read FID_BANNER write FID_BANNER;
+      property NOME: string read FNOME write FNOME;
+      property COD_CIDADE: string read FCOD_CIDADE write FCOD_CIDADE;
+
+      function Listar(pagina: integer): TJSONArray;
+  end;
+
+implementation
+
+{ TEstabelecimento }
+
+constructor TEstabelecimento.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TEstabelecimento.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+function TEstabelecimento.Listar(pagina: integer): TJSONArray;
+var
+  qry: TFDQuery;
+  qtd_reg_pagina, skip: integer;
+begin
+  qtd_reg_pagina := 10;
+  skip := (pagina * qtd_reg_pagina) - qtd_reg_pagina;
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+
+      if pagina > 0 then
+      begin
+        // sql
+      end
+      else
+      begin
+        SQL.Add('select * from tab_banner');
+        SQL.Add('from tab_estabelecimento e');
+        SQL.Add('join tab_categoria c on c.id_categoria = e.id_categoria');
+        SQL.Add('left join tab_usuario_favorito f on (f.id_estabelecimento = e.estabelecimento');
+        SQL.Add('                                     and f.id_usuario := id_usuario)');
+        SQL.Add('left join tab_cupom cp on (cp.id_cupom = e.id_cupom and cp.ind_ativo = ''S'' ');
+        SQL.Add('                            and cp._dt_validade >= current_timestamp)');
+
+        if ID_BANNER > 0 then
+        begin
+          SQL.Add('join tab_banner b on b.id_estabelecimento = e.id_estabelecimento');
+        end;
+
+        SQL.Add('where e.ind_ativo = ''S'' ');
+
+        ParamByName('ID_USUARIO').Value := ID_USUARIO;
+
+        if ID_ESTABELECIMENTO > 0 then
+        begin
+          SQL.Add('and e.id_estabelecimento = :id_estabelecimento');
+          ParamByName('id_estabelecimento').Value := ID_ESTABELECIMENTO;
+        end;
+
+        if ID_CATEGORIA > 0 then
+        begin
+          SQL.Add('and e.id_categoria = :id_categoria');
+          ParamByName('id_categoria').Value := ID_CATEGORIA;
+        end;
+
+        if NOME <> '' then
+        begin
+          SQL.Add('and e.nome like :nome');
+          ParamByName('nome').Value := '%' + NOME + '%';
+        end;
+
+        if COD_CIDADE <> '' then
+        begin
+          SQL.Add('and e.cod_cidade = :cod_cidade');
+          ParamByName('cod_cidade').Value := COD_CIDADE;
+        end;
+
+        if ID_BANNER > 0 then
+        begin
+          SQL.Add('and e.id_banner = :id_banner');
+          ParamByName('id_banner').Value := ID_BANNER;
+        end;
+      end;
+
+      Active := True;
+    end;
+
+    Result := qry.ToJSONArray();
+
+  finally
+    qry.Free;
+  end;
+end;
+
+end.
