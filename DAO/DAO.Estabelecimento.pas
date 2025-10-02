@@ -65,7 +65,7 @@ begin
       if pagina > 0 then
       begin
         SQL.Add('select first :first skip :skip');
-        ParamByName('frist').Value := qtd_reg_pagina;
+        ParamByName('first').Value := qtd_reg_pagina;
         ParamByName('skip').Value := skip;
       end
       else
