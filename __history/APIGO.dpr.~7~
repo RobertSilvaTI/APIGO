@@ -10,8 +10,7 @@ uses
   DAO.Cidade in 'DAO\DAO.Cidade.pas',
   DAO.Cupom in 'DAO\DAO.Cupom.pas',
   DAO.Destaque in 'DAO\DAO.Destaque.pas',
-  DAO.Estabelecimento in 'DAO\DAO.Estabelecimento.pas',
-  DAO.Pedido in 'DAO\DAO.Pedido.pas';
+  DAO.Estabelecimento in 'DAO\DAO.Estabelecimento.pas';
 
 {$R *.res}
 

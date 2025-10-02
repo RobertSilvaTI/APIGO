@@ -51,13 +51,8 @@ type
       property STATUS: string read FSTATUS write FSTATUS;
 
       function Listar(cod_cidade: string): TJSONArray;
-      function GetConnection: TFDConnection;
       procedure Avaliar;
       procedure Inserir;
-
-      procedure StartTransaction;
-      procedure RollbackTransaction;
-      procedure CommitTransaction;
   end;
 
 implementation
@@ -67,26 +62,6 @@ implementation
 constructor TPedido.Create;
 begin
   FConn := TConnection.CreateConnection;
-end;
-
-procedure TPedido.StartTransaction;
-begin
-  FConn.StartTransaction;
-end;
-
-procedure TPedido.RollbackTransaction;
-begin
-  FConn.Rollback;
-end;
-
-procedure TPedido.CommitTransaction;
-begin
-  FConn.Commit;
-end;
-
-function TPedido.GetConnection: TFDConnection;
-begin
-  Result := Fconn;
 end;
 
 destructor TPedido.Destroy;

@@ -138,6 +138,7 @@
         <DCCReference Include="DAO\DAO.Cupom.pas"/>
         <DCCReference Include="DAO\DAO.Destaque.pas"/>
         <DCCReference Include="DAO\DAO.Estabelecimento.pas"/>
+        <DCCReference Include="DAO\DAO.Pedido.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -51,13 +51,8 @@ type
       property STATUS: string read FSTATUS write FSTATUS;
 
       function Listar(cod_cidade: string): TJSONArray;
-      function GetConnection: TFDConnection;
       procedure Avaliar;
       procedure Inserir;
-
-      procedure StartTransaction;
-      procedure RollbackTransaction;
-      procedure CommitTransaction;
   end;
 
 implementation
@@ -67,26 +62,6 @@ implementation
 constructor TPedido.Create;
 begin
   FConn := TConnection.CreateConnection;
-end;
-
-procedure TPedido.StartTransaction;
-begin
-  FConn.StartTransaction;
-end;
-
-procedure TPedido.RollbackTransaction;
-begin
-  FConn.Rollback;
-end;
-
-procedure TPedido.CommitTransaction;
-begin
-  FConn.Commit;
-end;
-
-function TPedido.GetConnection: TFDConnection;
-begin
-  Result := Fconn;
 end;
 
 destructor TPedido.Destroy;
@@ -209,23 +184,8 @@ begin
         ParamByName('id_cupom').Value := Unassigned;
       end;
 
-      ParamByName('vl_taxa_entrega').Value := VL_TAXA_ENTREGA;
-      ParamByName('vl_desconto').Value := VL_DESCONTO;
-      ParamByName('vl_total').Value := VL_TOTAL;
-      ParamByName('status').Value := STATUS;
-      ParamByName('avaliacao').Value := AVALIACAO;
-
-      ParamByName('endereco').Value := ENDERECO;
-      ParamByName('complemento').Value := COMPLEMENTO;
-      ParamByName('bairro').Value := BAIRRO;
-      ParamByName('cidade').Value := CIDADE;
-      ParamByName('uf').Value := UF;
-      ParamByName('cep').Value := CEP;
-      ParamByName('cod_cidade').Value := COD_CIDADE;
 
       Active := True;
-
-      ID_PEDIDO := FieldByName('id_pedido').AsInteger;
     end;
 
   finally
@@ -238,34 +198,10 @@ begin
   if (ID_USUARIO <= 0) and MatchStr(operacao, ['Listar']) then
     raise Exception.Create('ID de usuário não informado!');
 
-  if (ID_ESTABELECIMENTO <= 0) and MatchStr(operacao, ['Inserir']) then
-    raise Exception.Create('ID do estabelecimento não informado!');
-
-  if (STATUS.IsEmpty) and MatchStr(operacao, ['Inserir']) then
-    raise Exception.Create('Status não informado!');
-
-  if (ENDERECO.IsEmpty) and MatchStr(operacao, ['Inserir']) then
-    raise Exception.Create('Endereço não informado!');
-
-  if (BAIRRO.IsEmpty) and MatchStr(operacao, ['Inserir']) then
-    raise Exception.Create('Bairro não informado!');
-
-  if (CIDADE.IsEmpty) and MatchStr(operacao, ['Inserir']) then
-    raise Exception.Create('Cidade não informada!');
-
-  if (UF.IsEmpty) and MatchStr(operacao, ['Inserir']) then
-    raise Exception.Create('UF não informada!');
-
-  if (CEP.IsEmpty) and MatchStr(operacao, ['Inserir']) then
-    raise Exception.Create('CEP não informado!');
-
-  if (COD_CIDADE.IsEmpty) and MatchStr(operacao, ['Inserir']) then
-    raise Exception.Create('Código de cidade não informado!');
-
-  if (AVALIACAO <= 0) and MatchStr(operacao, ['Avaliar']) then
+  if (AVALIACAO <= 0) and MatchStr(operacao, ['Validar']) then
     raise Exception.Create('Avaliação não inserida!');
 
-  if (ID_PEDIDO <= 0) and MatchStr(operacao, ['Avaliar']) then
+  if (ID_PEDIDO <= 0) and MatchStr(operacao, ['Validar']) then
     raise Exception.Create('ID do pedido não informado!');
 end;
 
