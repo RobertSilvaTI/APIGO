@@ -1,0 +1,92 @@
+unit DAO.PedidoItem;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
+Dataset.Serialize, DAO.Connection;
+
+type
+  TPedidoItem = class
+    private
+      FConn: TFDConnection;
+      FID_PEDIDO: integer;
+      FID_PRODUTO: integer;
+      FDESCRICAO: string;
+      FVL_TOTAL: double;
+      FID_PEDIDO_ITEM: integer;
+      FVL_UNIT: double;
+    FQTD: integer;
+      procedure Validate(operacao: string);
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      property ID_PEDIDO: integer read FID_PEDIDO write FID_PEDIDO;
+      property ID_PRODUTO: integer read FID_PRODUTO write FID_PRODUTO;
+      property DESCRICAO: string read FDESCRICAO write FDESCRICAO;
+      property QTD: integer read FQTD write FQTD;
+      property VL_UNIT: double read FVL_UNIT write FVL_UNIT;
+      property VL_TOTAL: double read FVL_TOTAL write FVL_TOTAL;
+      property ID_PEDIDO_ITEM: integer read FID_PEDIDO_ITEM write FID_PEDIDO_ITEM;
+
+      procedure Inserir;
+  end;
+
+implementation
+
+{ TPedidoItem }
+
+constructor TPedidoItem.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TPedidoItem.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+procedure TPedidoItem.Inserir;
+var
+  qry: TFDQuery;
+begin
+  Validate('Inserir');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('insert into tab_pedido_item(id_pedido, ');
+      SQL.Add('id_produto, descricao, qtd, vl_unit, vl_total)');
+      SQL.Add('values(:id_pedido, :id_produto, :descricao, :qtd, :vl_unit, :vl_total)');
+      SQL.Add('returning id_pedido_item');
+
+      ParamByName('id_pedido').Value := id_pedido;
+      ParamByName('id_produto').Value := id_produto;
+      ParamByName('descricao').Value := descricao;
+      ParamByName('qtd').Value := qtd;
+      ParamByName('vl_unit').Value := vl_unit;
+      ParamByName('vl_total').Value := vl_total;
+
+      Active := True;
+      id_pedido_item := FieldByName('id_pedido_item').AsInteger;
+    end;
+
+  finally
+    qry.Free;
+  end;
+end;
+
+procedure TPedidoItem.Validate(operacao: string);
+begin
+  if (COD_CUPOM.IsEmpty) and MatchStr(operacao, ['Inserir'])  then
+    raise Exception.Create('Cupom não informado!');
+end;
+
+end.

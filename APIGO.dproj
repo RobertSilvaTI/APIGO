@@ -139,6 +139,7 @@
         <DCCReference Include="DAO\DAO.Destaque.pas"/>
         <DCCReference Include="DAO\DAO.Estabelecimento.pas"/>
         <DCCReference Include="DAO\DAO.Pedido.pas"/>
+        <DCCReference Include="DAO\DAO.PedidoItem.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

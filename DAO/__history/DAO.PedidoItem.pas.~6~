@@ -1,0 +1,65 @@
+unit DAO.PedidoItem;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
+Dataset.Serialize, DAO.Connection;
+
+type
+  TPedidoItem = class
+    private
+      FConn: TFDConnection;
+      procedure Validate(operacao: string);
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      procedure Inserir;
+  end;
+
+implementation
+
+{ TPedidoItem }
+
+constructor TPedidoItem.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TPedidoItem.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+procedure TPedidoItem.Inserir;
+var
+  qry: TFDQuery;
+begin
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('select * from tab_banner');
+      SQL.Add('where cod_cidade = :cod_cidade order by ordem');
+
+      Active := True;
+    end;
+
+  finally
+    qry.Free;
+  end;
+end;
+
+procedure TPedidoItem.Validate(operacao: string);
+begin
+  if (COD_CUPOM.IsEmpty) and MatchStr(operacao, ['Validar'])  then
+    raise Exception.Create('Cupom não informado!');
+end;
+
+end.

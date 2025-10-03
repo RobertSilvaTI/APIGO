@@ -11,7 +11,8 @@ uses
   DAO.Cupom in 'DAO\DAO.Cupom.pas',
   DAO.Destaque in 'DAO\DAO.Destaque.pas',
   DAO.Estabelecimento in 'DAO\DAO.Estabelecimento.pas',
-  DAO.Pedido in 'DAO\DAO.Pedido.pas';
+  DAO.Pedido in 'DAO\DAO.Pedido.pas',
+  DAO.PedidoItem in 'DAO\DAO.PedidoItem.pas';
 
 {$R *.res}
 
