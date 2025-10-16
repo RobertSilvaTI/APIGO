@@ -18,7 +18,7 @@ type
   end;
 
 Const
-  ARQ_INI = 'C:\Users\Robert Silva\OneDrive\Documentos\GitHub\99Club\APIGO\DAO\config\Config.ini';
+  ARQ_INI = 'C:\Users\Robert\Documents\GitHub\Delphi\APIGO\DAO\config\Config.ini';
 
 implementation
 

@@ -1,0 +1,97 @@
+unit DAO.PedidoItemDetalhe;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, FireDAC.Stan.Param, Data.DB, System.JSON, System.SysUtils,
+System.StrUtils, DataSet.Serialize, DAO.Connection;
+
+type
+  TPedidoItemDetalhe = class
+    private
+      FConn: TFDConnection;
+      FVL_ITEM: double;
+      FID_PEDIDO_ITEM: integer;
+      FID_PEDIDO_DETALHE: integer;
+      FID_ITEM: integer;
+      FNOME: string;
+      FORDEM: integer;
+      procedure Validate(operacao: string);
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      property ID_PEDIDO_DETALHE: integer read FID_PEDIDO_DETALHE write FID_PEDIDO_DETALHE;
+      property ID_PEDIDO_ITEM: integer read FID_PEDIDO_ITEM write FID_PEDIDO_ITEM;
+      property ID_ITEM: integer read FID_ITEM write FID_ITEM;
+      property ORDEM: integer read FORDEM write FORDEM;
+      property VL_ITEM: double read FVL_ITEM write FVL_ITEM;
+      property NOME: string read FNOME write FNOME;
+
+      procedure Inserir;
+  end;
+
+implementation
+
+{ TPedidoItemDetalhe }
+
+constructor TPedidoItemDetalhe.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TPedidoItemDetalhe.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+procedure TPedidoItemDetalhe.Inserir;
+var
+  qry: TFDQuery;
+begin
+  Validate('Inserir');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('insert into tab_pedido_item_detalhe(id_pedido_item, nome, id_item, vl_item, ordem)');
+      SQL.Add('values(:id_pedido_item, :nome, :id_item, :vl_item, :ordem)');
+      SQL.Add('returning id_pedido_detalhe');
+
+      ParamByName('id_pedido_item').Value := ID_PEDIDO_ITEM;
+      ParamByName('nome').Value := NOME;
+      ParamByName('id_item').Value := ID_ITEM;
+      ParamByName('vl_item').Value := VL_ITEM;
+      ParamByName('ordem').Value := ORDEM;
+
+      Active := True;
+      ID_PEDIDO_DETALHE := FieldByName('id_pedio_detalhe').AsInteger;
+    end;
+
+  finally
+    qry.Free;
+  end;
+end;
+
+procedure TPedidoItemDetalhe.Validate(operacao: string);
+begin
+  if (ID_PEDIDO_ITEM <= 0) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('ID do pedido item não informado!');
+
+  if (ID_ITEM <= 0) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('ID do item não informado!');
+
+  if (NOME.IsEmpty) and MatchStr(operacao, ['Inserir'])  then
+    raise Exception.Create('Nome não informado!');
+
+  if (ORDEM <= 0) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('Ordem não informada!');
+end;
+
+end.
