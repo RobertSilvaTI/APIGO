@@ -12,7 +12,9 @@ uses
   DAO.Destaque in 'DAO\DAO.Destaque.pas',
   DAO.Estabelecimento in 'DAO\DAO.Estabelecimento.pas',
   DAO.Pedido in 'DAO\DAO.Pedido.pas',
-  DAO.PedidoItem in 'DAO\DAO.PedidoItem.pas';
+  DAO.PedidoItem in 'DAO\DAO.PedidoItem.pas',
+  DAO.PedidoItemDetalhe in 'DAO\DAO.PedidoItemDetalhe.pas',
+  DAO.Produto in 'DAO\DAO.Produto.pas';
 
 {$R *.res}
 

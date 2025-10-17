@@ -1,0 +1,131 @@
+unit DAO.Produto;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils, System.StrUtils,
+DataSet.Serialize, DAO.Connection;
+
+type TProduto = class
+  private
+    FConn: TFDConnection;
+    FID_PRODUTO: integer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property ID_PRODUTO: integer read FID_PRODUTO write FID_PRODUTO;
+
+    function Listar: TJSONArray;
+    function Cardapio: TJSONArray;
+    function ListarOpcao: TJSONArray;
+end;
+
+implementation
+
+{ TProduto }
+
+constructor TProduto.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TProduto.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+function TProduto.Listar: TJSONArray;
+var
+  qry: TFDQuery;
+begin
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('select * from tab_produto');
+      SQL.Add('where id_produto > 0');
+
+      if ID_PRODUTO > 0 then
+      begin
+        SQL.Add('and id_produto = :id_produto');
+        ParamByName('id_produto').Value := ID_PRODUTO;
+      end;
+
+      SQL.Add('order by nome');
+      Active := True;
+    end;
+
+    Result := qry.ToJSONArray();
+
+  finally
+    qry.Free;
+  end;
+end;
+
+function TProduto.ListarOpcao: TJSONArray;
+var
+  qry: TFDQuery;
+begin
+  Validate('ListarOpcao');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('select o.*, i.id_item, i.nome as nome_item, ');
+      SQL.Add('coalesce(i.descricao, '''') as descricao_item, coalesce(i.vl_item,0) as vl_item');
+      SQL.Add('from tab_produto_opcao o');
+      SQL.Add('join tab_produto_opcao_item i on i.id_opcao = o.id_opcao');
+      SQL.Add('where o.ind_ativo = ''S'' ');
+      SQL.Add('and o.id_produto = :id_produto');
+      SQL.Add('order by o.ordem, i.ordem');
+      ParamByName('id_produto').Value := ID_PRODUTO;
+
+      Active := True;
+    end;
+
+    Result := qry.ToJSONArray();
+
+  finally
+    qry.Free;
+  end;
+end;
+
+function TProduto.Cardapio: TJSONArray;
+var
+  qry: TFDQuery;
+begin
+  Validate('Cardapio');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('');
+
+      Active := True;
+    end;
+
+    Result := qry.ToJSONArray();
+  finally
+    qry.Free;
+  end;
+end;
+
+end.
+
+
