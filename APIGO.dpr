@@ -14,7 +14,8 @@ uses
   DAO.Pedido in 'DAO\DAO.Pedido.pas',
   DAO.PedidoItem in 'DAO\DAO.PedidoItem.pas',
   DAO.PedidoItemDetalhe in 'DAO\DAO.PedidoItemDetalhe.pas',
-  DAO.Produto in 'DAO\DAO.Produto.pas';
+  DAO.Produto in 'DAO\DAO.Produto.pas',
+  DAO.Usuario in 'DAO\DAO.Usuario.pas';
 
 {$R *.res}
 

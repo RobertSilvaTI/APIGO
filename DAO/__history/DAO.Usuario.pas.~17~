@@ -1,0 +1,241 @@
+unit DAO.Usuario;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, FireDAC.Stan.Param, Data.DB, System.JSON, System.SysUtils,
+System.StrUtils, DataSet.Serialize, DAO.Connection;
+
+type TUsuario = class
+  private
+    FConn: TFDConnection;
+    FBAIRRO: string;
+    FEMAIL: string;
+    FCOD_CIDADE: string;
+    FUF: string;
+    FCEP: string;
+    FSENHA: string;
+    FCOMPLEMENTO: string;
+    FNOME: string;
+    FCIDADE: string;
+    FENDERECO: string;
+    FID_USUARIO: integer;
+    procedure Validate(operacao: string);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property ID_USUARIO: integer read FID_USUARIO write FID_USUARIO;
+    property NOME: string read FNOME write FNOME;
+    property EMAIL: string read FEMAIL write FEMAIL;
+    property SENHA: string read FSENHA write FSENHA;
+    property ENDERECO: string read FENDERECO write FENDERECO;
+    property COMPLEMENTO: string read FCOMPLEMENTO write FCOMPLEMENTO;
+    property BAIRRO: string read FBAIRRO write FBAIRRO;
+    property CIDADE: string read FCIDADE write FCIDADE;
+    property UF: string read FUF write FUF;
+    property CEP: string read FCEP write FCEP;
+    property COD_CIDADE: string read FCOD_CIDADE write FCOD_CIDADE;
+
+    function Listar: TJSONArray;
+    function Login: TJSONArray;
+    procedure Inserir;
+    procedure Editar;
+end;
+
+implementation
+
+{ TUsuario }
+
+constructor TUsuario.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TUsuario.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+procedure TUsuario.Editar;
+var
+  qry: TFDQuery;
+begin
+  Validate('Editar');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('');
+
+      Active := true;
+    end;
+  finally
+    qry.Free;
+  end;
+end;
+
+procedure TUsuario.Inserir;
+var
+  qry: TFDQuery;
+begin
+  Validate('Inserir');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    try
+        FConn.StartTransaction;
+
+        with qry do
+        begin
+          Active := False;
+          SQL.Clear;
+          SQL.Add('insert into tab_usuario(nome, email, senha, dt_cadastro)');
+          SQL.Add('values(:nome, :email, :senha, current_timestamp');
+          SQL.Add('returning id_usuario');
+
+          ParamByName('nome').Value := NOME;
+          ParamByName('email').Value := EMAIL;
+          ParamByName('senha').Value := SENHA;
+
+          Active := True;
+          ID_USUARIO := FieldByName('id_usuario').AsInteger;
+
+          Active := False;
+          SQL.Clear;
+          SQL.Add('insert into tab_usuario_endereco(id_usuario, endereco, complemento,');
+          SQL.Add('bairro, cidade, uf, cep, ind_padrao, cod_cidade)');
+          SQL.Add('values(:id_usuario, :endereco, :complemento,');
+          SQL.Add(':bairro, :cidade, :uf, :cep, :ind_padrao, :cod_cidade)');
+
+          ParamByName('id_usuario').Value := ID_USUARIO;
+          ParamByName('endereco').Value := ENDERECO;
+          ParamByName('complemento').Value := COMPLEMENTO;
+          ParamByName('bairro').Value := BAIRRO;
+          ParamByName('cidade').Value := CIDADE;
+          ParamByName('uf').Value := UF;
+          ParamByName('cep').Value := CEP;
+          ParamByName('ind_padrao').Value := 'S';
+          ParamByName('cod_cidade').Value := COD_CIDADE;
+          ExecSQL;
+        end;
+
+        FConn.Commit;
+    except on E:Exception do
+      begin
+        FConn.Rollback;
+        raise Exception.Create('Erro na inserção dos dados: ' + E.Message);
+      end;
+    end;
+  finally
+    qry.Free;
+  end;
+end;
+
+function TUsuario.Listar: TJSONArray;
+var
+  qry: TFDQuery;
+begin
+  Validate('Listar');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('select id_usuario, nome, email, dt_cadastro');
+      SQL.Add('from tab_usuario');
+      SQL.Add('where id_usuario = :id_usuario');
+      ParamByName('id_usuario').Value := ID_USUARIO;
+
+      Active := True;
+    end;
+
+    Result := qry.ToJSONArray();
+
+  finally
+    qry.Free;
+  end;
+end;
+
+function TUsuario.Login: TJSONArray;
+var
+  qry: TFDQuery;
+begin
+  Validate('Login');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('select u.id_usuario, u.nome, u.email, u.dt_cadastro, ');
+      SQL.Add('e.endereco, e.complemento, e.bairro, e.cidade, e.uf, e.cep, e.cod_cidade');
+      SQL.Add('from tab_usuario u');
+      SQL.Add('left join tab_usuario_endereco e on e.id_usuario = u.id_usuario and e.ind_padrao = ''S'' ');
+      SQL.Add('where u.email = :email and u.senha = :senha');
+      ParamByName('email').Value := EMAIL;
+      ParamByName('senha').Value := SENHA;
+
+      Active := True;
+    end;
+
+    Result := qry.ToJSONArray();
+
+  finally
+    qry.Free;
+  end;
+end;
+
+procedure TUsuario.Validate(operacao: string);
+begin
+  if (ID_USUARIO <= 0) and MatchStr(operacao, ['Listar', 'Inserir', 'Editar']) then
+  raise Exception.Create('ID de Usuário não informada!');
+
+  if (EMAIL.IsEmpty) and MatchStr(operacao, ['Login', 'Inserir']) then
+    raise Exception.Create('E-mail não informado!');
+
+  if (SENHA.IsEmpty)and MatchStr(operacao, ['Login', 'Inserir']) then
+    raise Exception.Create('Senha não informada!');
+
+  if (NOME.IsEmpty) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('Nome de Usuário não informado!');
+
+  if (ENDERECO.IsEmpty) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('Endereço não informado!');
+
+  if (COMPLEMENTO.IsEmpty) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('Complemento não informado!');
+
+  if (BAIRRO.IsEmpty) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('Bairro não informado!');
+
+  if (CIDADE.IsEmpty) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('Cidade não informada!');
+
+  if (UF.IsEmpty) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('UF não informada!');
+
+  if (CEP.IsEmpty) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('CEP não informado!');
+
+  if (COD_CIDADE.IsEmpty) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('Cód. de cidade não informado!');
+
+end;
+
+end.

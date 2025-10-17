@@ -202,6 +202,7 @@
         <DCCReference Include="DAO\DAO.PedidoItem.pas"/>
         <DCCReference Include="DAO\DAO.PedidoItemDetalhe.pas"/>
         <DCCReference Include="DAO\DAO.Produto.pas"/>
+        <DCCReference Include="DAO\DAO.Usuario.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
