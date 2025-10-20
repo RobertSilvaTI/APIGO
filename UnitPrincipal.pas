@@ -10,6 +10,7 @@ uses
 type
   TFrmPrincipal = class(TForm)
     memo: TMemo;
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
@@ -22,5 +23,24 @@ var
 implementation
 
 {$R *.fmx}
+uses
+  Horse, Horse.Jhonson, Horse.Compression;
+
+procedure TFrmPrincipal.FormShow(Sender: TObject);
+begin
+  THorse.Use(Compression());
+  THorse.Use(Jhonson());
+
+  // rotas
+//  THorse.Get('consulta', procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
+//  begin
+//    Res.Send('Consulta OK!').Status(200);
+//    memo.Lines.Add('Consulta realizada! ' + DateTimeToStr(now) + ' | ' + Res.Status.ToString);
+//  end);
+
+  THorse.Listen(8082);
+
+  memo.Lines.Add('Servidor executando na porta: ' + THorse.Port.ToString);
+end;
 
 end.

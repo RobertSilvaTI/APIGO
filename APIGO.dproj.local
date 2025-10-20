@@ -28,9 +28,11 @@
     <Transaction>2025/10/16 15:11:36.000.630,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\DAO\DAO.PedidoItemDetalhe.pas</Transaction>
     <Transaction>2025/10/16 16:57:58.000.595,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
     <Transaction>2025/10/16 16:58:07.000.888,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\DAO\DAO.Produto.pas</Transaction>
-    <Transaction>2025/10/17 11:59:05.964,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
-    <Transaction>2025/10/17 11:59:16.856,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\DAO\DAO.Usuario.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
-    <Transaction>2025/10/17 15:24:03.979,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
-    <Transaction>2025/10/17 15:25:15.267,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\DAO\DAO.UsuarioEndereco.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/17 11:59:05.000.964,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/17 11:59:16.000.856,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\DAO\DAO.Usuario.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/17 15:24:03.000.979,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/17 15:25:15.000.267,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\DAO\DAO.UsuarioEndereco.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/20 10:31:00.000.022,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/20 10:31:20.000.417,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\DAO\DAO.UsuarioFavorito.pas</Transaction>
   </Transactions>
 </BorlandProject>

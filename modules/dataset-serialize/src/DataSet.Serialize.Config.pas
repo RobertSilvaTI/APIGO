@@ -120,8 +120,7 @@ begin
   if not Assigned(FInstance) then
   begin
     FInstance := TDataSetSerializeConfig.Create;
-    // FInstance.CaseNameDefinition := cndLowerCamelCase;
-    FInstance.CaseNameDefinition := cndLower;
+    FInstance.CaseNameDefinition := cndLowerCamelCase;
     FInstance.DataSetPrefix := ['mt', 'qry'];
     FInstance.DateInputIsUTC := True;
     FInstance.RemoveBlankSpaceFieldName := True;
