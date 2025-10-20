@@ -24,7 +24,7 @@ implementation
 
 {$R *.fmx}
 uses
-  Horse, Horse.Jhonson, Horse.Compression;
+  Horse, Horse.Jhonson, Horse.Compression, Controller.Categoria;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
@@ -37,6 +37,7 @@ begin
 //    Res.Send('Consulta OK!').Status(200);
 //    memo.Lines.Add('Consulta realizada! ' + DateTimeToStr(now) + ' | ' + Res.Status.ToString);
 //  end);
+  Controller.Categoria.RotaAPI;
 
   THorse.Listen(8082);
 

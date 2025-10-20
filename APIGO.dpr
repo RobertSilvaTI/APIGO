@@ -17,7 +17,8 @@ uses
   DAO.Produto in 'DAO\DAO.Produto.pas',
   DAO.Usuario in 'DAO\DAO.Usuario.pas',
   DAO.UsuarioEndereco in 'DAO\DAO.UsuarioEndereco.pas',
-  DAO.UsuarioFavorito in 'DAO\DAO.UsuarioFavorito.pas';
+  DAO.UsuarioFavorito in 'DAO\DAO.UsuarioFavorito.pas',
+  Controller.Categoria in 'Controller\Controller.Categoria.pas';
 
 {$R *.res}
 

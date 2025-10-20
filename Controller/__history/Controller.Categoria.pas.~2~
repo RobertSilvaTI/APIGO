@@ -1,0 +1,12 @@
+unit Controller.Categoria;
+
+interface
+
+uses Horse,
+     System.JSON,
+     DAO.Categoria,
+     System.SysUtils;
+
+implementation
+
+end.

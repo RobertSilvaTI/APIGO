@@ -1,0 +1,15 @@
+unit Controller.Categoria;
+
+interface
+
+uses Horse,
+     System.JSON,
+     DAO.Categoria,
+     System.SysUtils;
+
+procedure RotaAPI;
+procedure Listar(req: );
+
+implementation
+
+end.
