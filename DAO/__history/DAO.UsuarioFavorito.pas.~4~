@@ -1,0 +1,32 @@
+unit DAO.UsuarioFavorito;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, FireDAC.Stan.Param, System.JSON, System.SysUtils,
+System.StrUtils, DataSet.Serialize, DAO.Connection;
+
+type TUsuarioFavorito = class
+  private
+    FConn: TFDConnection;
+  public
+    constructor Create;
+    destructor Destroy; override;
+end;
+
+implementation
+
+{ TUsuarioFavorito }
+
+constructor TUsuarioFavorito.Create;
+begin
+  FConn := TConnection.CreateConnection;
+end;
+
+destructor TUsuarioFavorito.Destroy;
+begin
+  if Assigned(FConn) then
+    FConn.Free;
+  inherited;
+end;
+
+end.
