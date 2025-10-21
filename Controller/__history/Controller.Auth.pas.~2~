@@ -1,0 +1,19 @@
+unit Controller.Auth;
+
+interface
+
+uses Horse, Horse.JWT, JOSE.Core.JWT, JOSE.Core.Builder, JOSE.Types.JSON, System.JSON, System.SysUtils;
+
+const
+  SECRET = 'Pasmado#1';
+
+type
+  TAuth = class(TJWTClaims)
+    strict private
+
+    public
+  end;
+
+implementation
+
+end.
