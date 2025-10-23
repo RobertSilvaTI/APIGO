@@ -4,7 +4,7 @@ object FrmPrincipal: TFrmPrincipal
   Caption = 'Servidor - Delivery'
   ClientHeight = 480
   ClientWidth = 640
-  Position = DesktopCenter
+  Position = OwnerFormCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]

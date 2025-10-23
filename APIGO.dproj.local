@@ -36,5 +36,11 @@
     <Transaction>2025/10/20 10:31:20.000.417,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\DAO\DAO.UsuarioFavorito.pas</Transaction>
     <Transaction>2025/10/20 16:12:11.000.760,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
     <Transaction>2025/10/20 16:12:24.000.021,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Controller\Controller.Categoria.pas</Transaction>
+    <Transaction>2025/10/21 11:06:07.000.458,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/21 11:06:22.000.311,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Controller\Controller.Auth.pas</Transaction>
+    <Transaction>2025/10/22 09:32:05.000.962,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/22 09:32:29.000.838,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Controller\Controller.Usuario.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/22 10:24:24.000.062,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/22 10:24:35.000.048,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Controller\Controller.Comum.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

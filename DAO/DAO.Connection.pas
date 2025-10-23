@@ -6,7 +6,7 @@ uses System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
 FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
 FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.ConsoleUI.Wait,
 Data.DB, FireDAC.Comp.Client, System.IniFiles, FireDAC.Phys.FBDef,
-FireDAC.Phys.IBBase, FireDAC.Phys.FB;
+FireDAC.Phys.IBBase, FireDAC.Phys.FB, DataSet.Serialize, DataSet.Serialize.Config;
 
 type
   TConnection = class
@@ -35,6 +35,9 @@ class procedure TConnection.CarregarConfig(Connection: TFDConnection);
 var
   ini: TIniFile;
 begin
+
+  TDataSetSerializeConfig.GetInstance.CaseNameDefinition := cndLower;
+
   try
     //Instanciando o arquivo .ini
     ini := TIniFile.Create(ARQ_INI);

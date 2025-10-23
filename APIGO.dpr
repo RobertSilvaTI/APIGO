@@ -18,7 +18,10 @@ uses
   DAO.Usuario in 'DAO\DAO.Usuario.pas',
   DAO.UsuarioEndereco in 'DAO\DAO.UsuarioEndereco.pas',
   DAO.UsuarioFavorito in 'DAO\DAO.UsuarioFavorito.pas',
-  Controller.Categoria in 'Controller\Controller.Categoria.pas';
+  Controller.Categoria in 'Controller\Controller.Categoria.pas',
+  Controller.Auth in 'Controller\Controller.Auth.pas',
+  Controller.Usuario in 'Controller\Controller.Usuario.pas',
+  Controller.Comum in 'Controller\Controller.Comum.pas';
 
 {$R *.res}
 

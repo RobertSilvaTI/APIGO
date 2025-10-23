@@ -24,24 +24,24 @@ implementation
 
 {$R *.fmx}
 uses
-  Horse, Horse.Jhonson, Horse.Compression, Controller.Categoria;
+  Horse,
+  Horse.Jhonson,
+  Horse.Compression,
+  Controller.Categoria,
+  Controller.Usuario;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
   THorse.Use(Compression());
   THorse.Use(Jhonson());
 
-  // rotas
-//  THorse.Get('consulta', procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-//  begin
-//    Res.Send('Consulta OK!').Status(200);
-//    memo.Lines.Add('Consulta realizada! ' + DateTimeToStr(now) + ' | ' + Res.Status.ToString);
-//  end);
+  // Rotas
   Controller.Categoria.RotaAPI;
+  Controller.Usuario.RotaAPI;
 
   THorse.Listen(8082);
 
-  memo.Lines.Add('Servidor executando na porta: ' + THorse.Port.ToString);
+  memo.Lines.Add('Servidor executando na porta: ' + THorse.Port.ToString + '!');
 end;
 
 end.

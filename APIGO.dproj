@@ -206,6 +206,9 @@
         <DCCReference Include="DAO\DAO.UsuarioEndereco.pas"/>
         <DCCReference Include="DAO\DAO.UsuarioFavorito.pas"/>
         <DCCReference Include="Controller\Controller.Categoria.pas"/>
+        <DCCReference Include="Controller\Controller.Auth.pas"/>
+        <DCCReference Include="Controller\Controller.Usuario.pas"/>
+        <DCCReference Include="Controller\Controller.Comum.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

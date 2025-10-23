@@ -37,7 +37,7 @@ type TUsuario = class
     property COD_CIDADE: string read FCOD_CIDADE write FCOD_CIDADE;
 
     function Listar: TJSONArray;
-    function Login: TJSONArray;
+    function Login: TJSONObject;
     procedure Inserir;
     procedure Editar;
 end;
@@ -79,7 +79,7 @@ begin
       ParamByName('email').Value := EMAIL;
       ParamByName('id_usuario').Value := ID_USUARIO;
 
-      Active := true;
+      ExecSQL;
     end;
 
   finally
@@ -105,7 +105,7 @@ begin
           Active := False;
           SQL.Clear;
           SQL.Add('insert into tab_usuario(nome, email, senha, dt_cadastro)');
-          SQL.Add('values(:nome, :email, :senha, current_timestamp');
+          SQL.Add('values(:nome, :email, :senha, current_timestamp)');
           SQL.Add('returning id_usuario');
 
           ParamByName('nome').Value := NOME;
@@ -175,7 +175,7 @@ begin
   end;
 end;
 
-function TUsuario.Login: TJSONArray;
+function TUsuario.Login: TJSONObject;
 var
   qry: TFDQuery;
 begin
@@ -200,7 +200,7 @@ begin
       Active := True;
     end;
 
-    Result := qry.ToJSONArray();
+    Result := qry.ToJSONObject();
 
   finally
     qry.Free;
