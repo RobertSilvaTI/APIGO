@@ -28,7 +28,8 @@ uses
   Horse.Jhonson,
   Horse.Compression,
   Controller.Categoria,
-  Controller.Usuario;
+  Controller.Usuario,
+  Controller.Cidade;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
@@ -38,6 +39,7 @@ begin
   // Rotas
   Controller.Categoria.RotaAPI;
   Controller.Usuario.RotaAPI;
+  Controller.Cidade.RotaAPI;
 
   THorse.Listen(8082);
 

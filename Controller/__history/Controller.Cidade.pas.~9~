@@ -1,0 +1,43 @@
+unit Controller.Cidade;
+
+interface
+
+uses
+  Horse,
+  Horse.JWT,
+  System.JSON,
+  System.SysUtils,
+  Controller.Auth,
+  DAO.Cidade;
+
+procedure RotaAPI;
+procedure Consultar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/cidades', Consultar);
+end;
+
+procedure Consultar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  cidade: TCidade;
+begin
+  try
+    try
+      cidade := TCidade.Create;
+
+      Res.Send<TJSONArray>(cidade.Listar).Status(200);
+    except on E:Exception do
+      Res.Send('Erro: ' + E.Message).Status(500);
+    end;
+
+  finally
+    cidade.Free;
+  end;
+end;
+
+end.

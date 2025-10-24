@@ -21,12 +21,14 @@ uses
   Controller.Categoria in 'Controller\Controller.Categoria.pas',
   Controller.Auth in 'Controller\Controller.Auth.pas',
   Controller.Usuario in 'Controller\Controller.Usuario.pas',
-  Controller.Comum in 'Controller\Controller.Comum.pas';
+  Controller.Comum in 'Controller\Controller.Comum.pas',
+  Controller.Cidade in 'Controller\Controller.Cidade.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
+  ReportMemoryLeaksOnShutdown := True;
   Application.CreateForm(TFrmPrincipal, FrmPrincipal);
   Application.Run;
 end.

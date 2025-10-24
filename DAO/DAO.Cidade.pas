@@ -52,7 +52,7 @@ begin
     Result := qry.ToJSONArray();
 
   finally
-    FConn.Free;
+    qry.Free;
   end;
 end;
 

@@ -209,6 +209,7 @@
         <DCCReference Include="Controller\Controller.Auth.pas"/>
         <DCCReference Include="Controller\Controller.Usuario.pas"/>
         <DCCReference Include="Controller\Controller.Comum.pas"/>
+        <DCCReference Include="Controller\Controller.Cidade.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
