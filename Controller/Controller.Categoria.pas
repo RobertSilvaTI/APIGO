@@ -33,7 +33,7 @@ begin
     try
       cat := TCategoria.Create;
 
-      Res.Send<TJSONArray>(cat.Listar(cod_cidade));
+      Res.Send<TJSONArray>(cat.Listar(cod_cidade)).Status(200);
     except on E:Exception do
       Res.Send('Erro na consulta: ' + E.Message).Status(500);
     end;

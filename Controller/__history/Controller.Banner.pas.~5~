@@ -1,0 +1,47 @@
+unit Controller.Banner;
+
+interface
+
+uses
+  Horse,
+  Horse.JWT,
+  System.JSON,
+  System.SysUtils,
+  DAO.Banner;
+
+procedure RotaAPI;
+procedure Consultar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+  THorse.Get('/v1/banners', Consultar);
+end;
+
+procedure Consultar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  banner: TBanner;
+  cod_cidade: string;
+begin
+  try
+    cod_cidade := Req.Query['cod_cidade'];
+  finally
+    cod_cidade := '';
+  end;
+
+  try
+    try
+      banner := TBanner.Create;
+
+      Res.Send<TJSONArray>(banner.Listar(cod_cidade)).Status(200);
+    except on E:Exception do
+      Res.Send('Erro: ' + E.Message).Status(500);
+    end;
+  finally
+    banner.Free;
+  end;
+
+end;
+
+end.

@@ -29,7 +29,8 @@ uses
   Horse.Compression,
   Controller.Categoria,
   Controller.Usuario,
-  Controller.Cidade;
+  Controller.Cidade,
+  Controller.Banner;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
@@ -40,6 +41,7 @@ begin
   Controller.Categoria.RotaAPI;
   Controller.Usuario.RotaAPI;
   Controller.Cidade.RotaAPI;
+  Controller.Banner.RotaAPI;
 
   THorse.Listen(8082);
 

@@ -1,0 +1,27 @@
+unit Controller.Banner;
+
+interface
+
+uses
+  Horse,
+  Horse.JWT,
+  System.JSON,
+  System.SysUtils,
+  DAO.Banner;
+
+procedure RotaAPI;
+procedure Consultar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+
+end;
+
+procedure Consultar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+end.

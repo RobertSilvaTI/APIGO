@@ -3,15 +3,19 @@ unit DAO.Banner;
 interface
 
 uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
-Dataset.Serialize, DAO.Connection;
+Dataset.Serialize, DAO.Connection, System.StrUtils;
 
 type
   TBanner = class
     private
       FConn: TFDConnection;
+      FCOD_CIDADE: string;
+//      procedure Validate(operacao: string);
     public
       constructor Create;
       destructor Destroy; override;
+
+//      property COD_CIDADE: string read FCOD_CIDADE write FCOD_CIDADE;
 
       function Listar(cod_cidade: string): TJSONArray;
   end;
@@ -36,6 +40,8 @@ function TBanner.Listar(cod_cidade: string): TJSONArray;
 var
   qry: TFDQuery;
 begin
+//  Validate('Listar');
+
   try
     qry := TFDQuery.Create(nil);
     qry.Connection := FConn;
@@ -58,5 +64,11 @@ begin
     qry.Free;
   end;
 end;
+
+//procedure TBanner.Validate(operacao: string);
+//begin
+//  if (COD_CIDADE.IsEmpty) and MatchStr(operacao, ['Listar']) then
+//    raise Exception.Create('Cód. de cidade não informado!');
+//end;
 
 end.
