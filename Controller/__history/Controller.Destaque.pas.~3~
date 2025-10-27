@@ -1,0 +1,53 @@
+unit Controller.Destaque;
+
+interface
+
+uses Horse,
+     Horse.JWT,
+     System.JSON,
+     System.SysUtils,
+     DAO.Destaque,
+     Controller.Comum,
+     Controller.Auth;
+
+procedure RotaAPI;
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/destaques/:cod_cidade', Listar);
+end;
+
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  destaq: TDestaque;
+  json: TJSONObject;
+  cod_cidade: string;
+begin
+  try
+    try
+      destaq := TDestaque.Create;
+      cod_cidade := Req.Query['cod_cidade'];
+
+      if cod_cidade.IsEmpty then
+      begin
+        Res.Send<TJSONObject>(CreateJsonObj('erro', 'Cód. cidade não informado!')).Status(204);
+      end;
+
+      json := destaq.Listar(cod_cidade);
+
+      Res.Send<TJSONObject>(json).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    destaq.Free;
+  end;
+end;
+
+end.

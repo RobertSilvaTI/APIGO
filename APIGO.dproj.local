@@ -48,5 +48,7 @@
     <Transaction>2025/10/24 14:10:27.000.075,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Controller\Controller.Banner.pas</Transaction>
     <Transaction>2025/10/27 10:35:36.976,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
     <Transaction>2025/10/27 10:35:51.698,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Controller\Controller.Cupom.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/27 12:19:12.812,=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
+    <Transaction>2025/10/27 12:19:59.621,C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Controller\Controller.Destaque.pas=C:\Users\Robert\Documents\GitHub\Delphi\APIGO\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

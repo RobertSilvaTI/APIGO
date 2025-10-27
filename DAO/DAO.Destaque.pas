@@ -13,7 +13,7 @@ type
       constructor Create;
       destructor Destroy; override;
 
-      function istar(cod_cidade: string): TJSONArray;
+      function Listar(cod_cidade: string): TJSONArray;
   end;
 
 implementation
@@ -32,7 +32,7 @@ begin
   inherited;
 end;
 
-function TDestaque.istar(cod_cidade: string): TJSONArray;
+function TDestaque.Listar(cod_cidade: string): TJSONArray;
 var
   qry: TFDQuery;
 begin
@@ -48,7 +48,7 @@ begin
       SQL.Add(' e.avaliacao, c.categoria from tab_destaque d');
       SQL.Add('join tab_destaque_estabelecimento de on de.id_destaque = d.id_destaque');
       SQL.Add('join tab_estabelecimento e on e.id_estabelecimento = de.id_estabelecimento');
-      SQL.Add('join categoria c on c.id_categoria = e.id_categoria');
+      SQL.Add('join tab_categoria c on c.id_categoria = e.id_categoria');
       SQL.Add('where d.ind_ativo = :ind_ativo');
       SQL.Add('and e.cod_cidade = :cod_cidade');
       SQL.Add('order by d.ordem');
@@ -62,7 +62,7 @@ begin
     Result := qry.ToJSONArray();
 
   finally
-    FConn.Free;
+    qry.Free;
   end;
 end;
 
