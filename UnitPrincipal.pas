@@ -30,7 +30,8 @@ uses
   Controller.Categoria,
   Controller.Usuario,
   Controller.Cidade,
-  Controller.Banner;
+  Controller.Banner,
+  Controller.Cupom;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
@@ -42,6 +43,7 @@ begin
   Controller.Usuario.RotaAPI;
   Controller.Cidade.RotaAPI;
   Controller.Banner.RotaAPI;
+  Controller.Cupom.RotaAPI;
 
   THorse.Listen(8082);
 

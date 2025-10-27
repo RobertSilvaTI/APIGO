@@ -23,7 +23,8 @@ uses
   Controller.Usuario in 'Controller\Controller.Usuario.pas',
   Controller.Comum in 'Controller\Controller.Comum.pas',
   Controller.Cidade in 'Controller\Controller.Cidade.pas',
-  Controller.Banner in 'Controller\Controller.Banner.pas';
+  Controller.Banner in 'Controller\Controller.Banner.pas',
+  Controller.Cupom in 'Controller\Controller.Cupom.pas';
 
 {$R *.res}
 

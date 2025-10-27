@@ -68,7 +68,7 @@ begin
 
       ParamByName('vl_pedido').Value := VL_PEDIDO;
       ParamByName('dt_validade').Value := FormatDateTime('yyyy-mm-dd', date);
-      ParamByName('cod_cupom').Value := ID_CUPOM;
+      ParamByName('cod_cupom').Value := COD_CUPOM;
       ParamByName('id_estabelecimento').Value := ID_ESTABELECIMENTO;
 
       Active := True;
@@ -77,14 +77,20 @@ begin
     Result := qry.ToJSONObject;
 
   finally
-    FConn.Free;
+    qry.Free;
   end;
 end;
 
 procedure TCupom.Validate(operacao: string);
 begin
   if (COD_CUPOM.IsEmpty) and MatchStr(operacao, ['Validar'])  then
-    raise Exception.Create('Cupom não informado!');
+    raise Exception.Create('Código do Cupom não informado!');
+
+  if (VL_PEDIDO = 0) and MatchStr(operacao, ['Validar']) then
+  raise Exception.Create('Valor do pedido não informado!');
+
+  if (ID_ESTABELECIMENTO = 0) and MatchStr(operacao, ['Validar']) then
+  raise Exception.Create('ID do estabelecimento não informada!');
 end;
 
 end.

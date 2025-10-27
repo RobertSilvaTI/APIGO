@@ -211,6 +211,7 @@
         <DCCReference Include="Controller\Controller.Comum.pas"/>
         <DCCReference Include="Controller\Controller.Cidade.pas"/>
         <DCCReference Include="Controller\Controller.Banner.pas"/>
+        <DCCReference Include="Controller\Controller.Cupom.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
