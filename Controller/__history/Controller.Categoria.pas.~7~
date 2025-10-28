@@ -3,11 +3,9 @@ unit Controller.Categoria;
 interface
 
 uses Horse,
-     Horse.JWT,
      System.JSON,
      DAO.Categoria,
-     System.SysUtils,
-     Controller.Auth;
+     System.SysUtils;
 
 procedure RotaAPI;
 procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
@@ -16,9 +14,7 @@ implementation
 
 procedure RotaAPI;
 begin
-  THorse
-    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
-    .Get('/v1/categorias', Listar);
+  THorse.Get('/v1/categorias', Listar);
 end;
 
 procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
