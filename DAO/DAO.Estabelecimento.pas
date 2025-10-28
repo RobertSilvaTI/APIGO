@@ -3,7 +3,7 @@ unit DAO.Estabelecimento;
 interface
 
 uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
-Dataset.Serialize, DAO.Connection;
+Dataset.Serialize, DAO.Connection, FireDAC.Stan.Param;
 
 type
   TEstabelecimento = class
@@ -64,30 +64,31 @@ begin
 
       if pagina > 0 then
       begin
-        SQL.Add('select first :first skip :skip');
+        SQL.Add('select first :first skip :skip ');
         ParamByName('first').Value := qtd_reg_pagina;
         ParamByName('skip').Value := skip;
       end
       else
-      begin
         SQL.Add('select');
-        SQL.Add('e.id_estabelecimento, e.nome, e.url_foto, e.url_logo, coalesce(e.avaliacao,0) as avaliacao, ');
-        SQL.Add('e.id_categoria, coalesce(e.id_cupom,0) as id_cupom, e.vl_min_pedido, ');
-        SQL.Add('e.vl_taxa_entrega, e.endereco, coalesce(e.complemento,'''') as complemento, ');
-        SQL.Add('e.bairro, e.cidade, e.uf, e.cep, e.cod_cidade, e.ind_ativo, ');
-        SQL.Add('coalesce(e.qtd_avaliacao,0) as qtd_avaliacao, ');
-        SQL.Add('coalesce(f.id_favorito,0) as id_favorito, ');
-        SQL.Add('coalesce(cp.descricao,'''') as texto_cupom, c.categoria ');
+
+        SQL.Add(' e.id_estabelecimento, e.nome, e.url_foto, ');
+        SQL.Add('   e.url_logo, coalesce(e.avaliacao,0) as avaliacao, ');
+        SQL.Add('   e.id_categoria, coalesce(e.id_cupom,0) as id_cupom, e.vl_min_pedido, ');
+        SQL.Add('   e.vl_taxa_entrega, e.endereco, coalesce(e.complemento,'''') as complemento, ');
+        SQL.Add('   e.bairro, e.cidade, e.uf, e.cep, e.cod_cidade, e.ind_ativo, ');
+        SQL.Add('   coalesce(e.qtd_avaliacao,0) as qtd_avaliacao, ');
+        SQL.Add('   coalesce(f.id_favorito,0) as id_favorito, ');
+        SQL.Add('   coalesce(cp.descricao,'''') as texto_cupom, c.categoria ');
         SQL.Add('from tab_estabelecimento e');
-        SQL.Add('join tab_categoria c on c.id_categoria = e.id_categoria');
-        SQL.Add('left join tab_usuario_favorito f on (f.id_estabelecimento = e.estabelecimento');
-        SQL.Add('                                     and f.id_usuario := id_usuario)');
-        SQL.Add('left join tab_cupom cp on (cp.id_cupom = e.id_cupom and cp.ind_ativo = ''S'' ');
-        SQL.Add('                            and cp._dt_validade >= current_timestamp)');
+        SQL.Add('   join tab_categoria c on c.id_categoria = e.id_categoria');
+        SQL.Add('   left join tab_usuario_favorito f on (f.id_estabelecimento = e.id_estabelecimento');
+        SQL.Add('                                     and f.id_usuario = :id_usuario)');
+        SQL.Add('   left join tab_cupom cp on (cp.id_cupom = e.id_cupom and cp.ind_ativo = ''S'' ');
+        SQL.Add('                            and cp.dt_validade >= current_timestamp)');
 
         if ID_BANNER > 0 then
         begin
-          SQL.Add('join tab_banner b on b.id_estabelecimento = e.id_estabelecimento');
+          SQL.Add('join tab_banner_estabelecimento b on (b.id_estabelecimento = e.id_estabelecimento)');
         end;
 
         SQL.Add('where e.ind_ativo = ''S'' ');
@@ -125,7 +126,6 @@ begin
         end;
 
         SQL.Add('order by e.nome');
-      end;
 
       Active := True;
     end;

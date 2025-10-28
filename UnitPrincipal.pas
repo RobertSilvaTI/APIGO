@@ -32,7 +32,8 @@ uses
   Controller.Cidade,
   Controller.Banner,
   Controller.Cupom,
-  Controller.Destaque;
+  Controller.Destaque,
+  Controller.Estabelecimento;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
@@ -46,6 +47,7 @@ begin
   Controller.Banner.RotaAPI;
   Controller.Cupom.RotaAPI;
   Controller.Destaque.RotaAPI;
+  Controller.Estabelecimento.RotaAPI;
 
   THorse.Listen(8082);
 
