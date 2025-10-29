@@ -119,7 +119,7 @@ begin
     begin
       Active := False;
       SQL.Clear;
-      SQL.Add('delete tab_usuario_favorito');
+      SQL.Add('delete from tab_usuario_favorito');
       SQL.Add('where id_favorito = :id_favorito and id_usuario = :id_usuario');
 
       ParamByName('id_favorito').Value := ID_FAVORITO;

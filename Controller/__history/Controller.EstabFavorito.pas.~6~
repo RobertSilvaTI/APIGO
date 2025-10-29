@@ -1,0 +1,102 @@
+unit Controller.EstabFavorito;
+
+interface
+
+uses Horse,
+     Horse.JWT,
+     System.JSON,
+     System.SysUtils,
+     DAO.UsuarioFavorito,
+     Controller.Comum,
+     Controller.Auth;
+
+procedure RotaAPI;
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Inserir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Excluir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/estabelecimentos/favoritos', Listar);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Post('/v1/estabelecimentos/favoritos/cadastrar', Inserir);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Delete('/v1/estabelecimentos/favoritos/:id_favorito', Excluir);
+end;
+
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  estabfav: TUsuarioFavorito;
+  json: TJSONArray;
+begin
+  try
+    try
+      estabfav := TUsuarioFavorito.Create;
+      estabfav.ID_USUARIO := GetUserRequest(Req);
+
+      json := estabfav.Listar;
+
+      Res.Send<TJSONArray>(json).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    estabfav.Free;
+  end;
+end;
+
+procedure Inserir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  estabfav: TUsuarioFavorito;
+  body: TJSONObject;
+begin
+  try
+    try
+      estabfav := TUsuarioFavorito.Create;
+      estabfav.ID_USUARIO := GetUserRequest(Req);
+
+      body := Req.Body<TJSONObject>;
+      estabfav.ID_ESTABELECIMENTO := body.GetValue<integer>('id_favorito', 0);
+
+      estabfav.Inserir;
+
+      Res.Send<TJSONObject>(CreateJsonObj('id_favorito', estabfav.ID_FAVORITO)).Status(201);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    estabfav.Free;
+  end;
+end;
+
+procedure Excluir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  estabfav: TUsuarioFavorito;
+begin
+  try
+    try
+      estabfav := TUsuarioFavorito.Create;
+      estabfav.ID_USUARIO := GetUserRequest(Req);
+      estabfav.ID_FAVORITO := Req.Params.Items['id_favorito'].ToInteger;
+
+      estabfav.Excluir;
+
+      Res.Status(204);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    estabfav.Free;
+  end;
+end;
+
+end.

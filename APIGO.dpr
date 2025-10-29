@@ -26,7 +26,8 @@ uses
   Controller.Banner in 'Controller\Controller.Banner.pas',
   Controller.Cupom in 'Controller\Controller.Cupom.pas',
   Controller.Destaque in 'Controller\Controller.Destaque.pas',
-  Controller.Estabelecimento in 'Controller\Controller.Estabelecimento.pas';
+  Controller.Estabelecimento in 'Controller\Controller.Estabelecimento.pas',
+  Controller.EstabFavorito in 'Controller\Controller.EstabFavorito.pas';
 
 {$R *.res}
 

@@ -33,7 +33,8 @@ uses
   Controller.Banner,
   Controller.Cupom,
   Controller.Destaque,
-  Controller.Estabelecimento;
+  Controller.Estabelecimento,
+  Controller.EstabFavorito;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
@@ -48,6 +49,7 @@ begin
   Controller.Cupom.RotaAPI;
   Controller.Destaque.RotaAPI;
   Controller.Estabelecimento.RotaAPI;
+  Controller.EstabFavorito.RotaAPI;
 
   THorse.Listen(8082);
 

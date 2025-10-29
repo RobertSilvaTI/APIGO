@@ -1,0 +1,73 @@
+unit Controller.UsuarioFavorito;
+
+interface
+
+uses Horse,
+     Horse.JWT,
+     System.JSON,
+     System.SysUtils,
+     DAO.UsuarioFavorito,
+     Controller.Comum,
+     Controller.Auth;
+
+procedure RotaAPI;
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Inserir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Excluir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/usuariosfav', Listar);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Post('/v1/usuariosfav/cadastrar', Inserir);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Delete('/v1/usuariosfav/:id_usuario', Excluir);
+end;
+
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  userfav: TUsuarioFavorito;
+  json: TJSONArray;
+begin
+  try
+    try
+      userfav := TUsuarioFavorito.Create;
+      userfav.ID_USUARIO := GetUserRequest(Req);
+
+      json := userfav.Listar;
+
+      if json.Size > 0 then
+      begin
+        Res.Send<TJSONArray>(json).Status(200);
+      end
+      else
+      begin
+        Res.Send<TJSONArray>(json).Status(204);
+        json.DisposeOf;
+      end;
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    userfav.Free;
+  end;
+end;
+
+procedure Inserir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+procedure Excluir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+end.

@@ -1,0 +1,40 @@
+unit Controller.UsuarioFavorito;
+
+interface
+
+uses Horse,
+     Horse.JWT,
+     System.JSON,
+     System.SysUtils,
+     DAO.UsuarioFavorito,
+     Controller.Comum,
+     Controller.Auth;
+
+procedure RotaAPI;
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Inserir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Excluir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+
+end;
+
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+procedure Inserir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+procedure Excluir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+end.
