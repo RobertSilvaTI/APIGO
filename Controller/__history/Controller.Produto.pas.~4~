@@ -1,0 +1,87 @@
+unit Controller.Produto;
+
+interface
+
+uses Horse,
+     Horse.JWT,
+     System.JSON,
+     System.SysUtils,
+     DAO.Produto,
+     Controller.Comum,
+     Controller.Auth;
+
+procedure RotaAPI;
+procedure Produto(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Opcoes(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Cardapio(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/produtos/:id_produto', Produto);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/cardapios/opcoes/:id_produto', Opcoes);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/cardapios/:id_estabelecimento', Cardapio);
+end;
+
+procedure Produto(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  prod: TProduto;
+begin
+  try
+    try
+      prod := TProduto.Create;
+
+      try
+        prod.ID_PRODUTO := Req.Params.Items['id_produto'].ToInteger;
+      except
+        prod.ID_PRODUTO := 0;
+      end;
+
+//      if prod.ID_PRODUTO = 0 then
+//      begin
+//        Res.Send<TJSONObject>(CreateJsonObj('erro', 'Parâmetro não informado')).Status(404);
+//        Exit;
+//      end;
+
+      Res.Send<TJSONArray>(prod.Listar).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    prod.Free;
+  end;
+end;
+
+procedure Opcoes(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  opcoes: TProduto;
+begin
+  try
+    try
+      opcoes := TProduto.Create;
+      opcoes.ID_PRODUTO := Req.Params.Items['id_produto'].ToInteger;
+
+      Res.Send<TJSONArray>(opcoes.ListarOpcao).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    opcoes.Free;
+  end;
+end;
+
+procedure Cardapio(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+end.

@@ -1,0 +1,40 @@
+unit Controller.Produto;
+
+interface
+
+uses Horse,
+     Horse.JWT,
+     System.JSON,
+     System.SysUtils,
+     DAO.Produto,
+     Controller.Comum,
+     Controller.Auth;
+
+procedure RotaAPI;
+procedure Produto(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Opcoes(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Cardapio(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+
+end;
+
+procedure Produto(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+procedure Opcoes(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+procedure Cardapio(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+end.

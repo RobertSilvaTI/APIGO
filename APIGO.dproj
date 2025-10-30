@@ -215,6 +215,7 @@
         <DCCReference Include="Controller\Controller.Destaque.pas"/>
         <DCCReference Include="Controller\Controller.Estabelecimento.pas"/>
         <DCCReference Include="Controller\Controller.EstabFavorito.pas"/>
+        <DCCReference Include="Controller\Controller.Produto.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

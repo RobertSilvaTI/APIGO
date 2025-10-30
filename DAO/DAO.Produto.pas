@@ -44,6 +44,8 @@ function TProduto.Listar: TJSONArray;
 var
   qry: TFDQuery;
 begin
+  Validate('Listar');
+
   try
     qry := TFDQuery.Create(nil);
     qry.Connection := FConn;
@@ -56,10 +58,8 @@ begin
       SQL.Add('where id_produto > 0');
 
       if ID_PRODUTO > 0 then
-      begin
-        SQL.Add('and id_produto = :id_produto');
-        ParamByName('id_produto').Value := ID_PRODUTO;
-      end;
+      SQL.Add('and id_produto = :id_produto');
+      ParamByName('id_produto').Value := ID_PRODUTO;
 
       SQL.Add('order by nome');
       Active := True;
@@ -139,7 +139,7 @@ end;
 
 procedure TProduto.Validate(operacao: string);
 begin
-  if (ID_PRODUTO <= 0) and MatchStr(operacao, ['ListarOpcao']) then
+  if (ID_PRODUTO <= 0) and MatchStr(operacao, ['ListarOpcao','Listar']) then
     raise Exception.Create('ID do produto não informado!');
 
   if (ID_ESTABELECIMENTO <= 0) and MatchStr(operacao, ['Cardapio']) then
