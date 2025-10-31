@@ -28,7 +28,8 @@ uses
   Controller.Destaque in 'Controller\Controller.Destaque.pas',
   Controller.Estabelecimento in 'Controller\Controller.Estabelecimento.pas',
   Controller.EstabFavorito in 'Controller\Controller.EstabFavorito.pas',
-  Controller.Produto in 'Controller\Controller.Produto.pas';
+  Controller.Produto in 'Controller\Controller.Produto.pas',
+  Controller.UsuarioEndereco in 'Controller\Controller.UsuarioEndereco.pas';
 
 {$R *.res}
 

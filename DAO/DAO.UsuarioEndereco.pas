@@ -72,7 +72,7 @@ begin
     begin
       Active := False;
       SQL.Clear;
-      SQL.Add('select * from tab_usuario_enderedo');
+      SQL.Add('select * from tab_usuario_endereco');
       SQL.Add('where id_usuario = :id_usuario');
       ParamByName('id_usuario').Value := ID_USUARIO;
 
@@ -81,6 +81,7 @@ begin
         SQL.Add('and id_endereco = :id_endereco');
         ParamByName('id_endereco').Value := ID_ENDERECO;
       end;
+
 
       if COD_CIDADE <> '' then
       begin
@@ -188,9 +189,9 @@ begin
     begin
       Active := False;
       SQL.Clear;
-      SQL.Add('delete tab_usuario_endereco');
+      SQL.Add('delete from tab_usuario_endereco');
       SQL.Add('where id_endereco = :id_endereco and id_usuario = :id_usuario');
-      ParamByName('id_usuario').Value := ID_ENDERECO;
+      ParamByName('id_endereco').Value := ID_ENDERECO;
       ParamByName('id_usuario').Value := ID_USUARIO;
 
       ExecSQL;

@@ -35,7 +35,8 @@ uses
   Controller.Destaque,
   Controller.Estabelecimento,
   Controller.EstabFavorito,
-  Controller.Produto;
+  Controller.Produto,
+  Controller.UsuarioEndereco;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
@@ -52,6 +53,7 @@ begin
   Controller.Estabelecimento.RotaAPI;
   Controller.EstabFavorito.RotaAPI;
   Controller.Produto.RotaAPI;
+  Controller.UsuarioEndereco.RotaAPI;
 
   THorse.Listen(8082);
 

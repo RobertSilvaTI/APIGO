@@ -1,0 +1,185 @@
+unit Controller.UsuarioEndereco;
+
+interface
+
+uses Horse,
+     Horse.JWT,
+     System.JSON,
+     System.SysUtils,
+     DAO.UsuarioEndereco,
+     Controller.Comum,
+     Controller.Auth;
+
+procedure RotaAPI;
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Inserir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Editar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure Excluir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure DefinPadrao(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/usuarios/enderecos', Listar);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Post('/v1/usuarios/enderecos', Inserir);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Put('/v1/usuarios/enderecos/:id_endereco', Editar);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Delete('/v1/usuarios/enderecos/:id_endereco', Excluir);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Patch('/v1/usuarios/enderecos/:id_endereco', DefinPadrao);
+end;
+
+procedure Listar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  end_user: TUsuarioEndereco;
+begin
+  try
+    try
+      end_user := TUsuarioEndereco.Create;
+      end_user.ID_USUARIO := GetUserRequest(Req);
+
+      if Req.Query.Items['id_endereco'] <> '' then
+      end_user.ID_ENDERECO := Req.Query.Items['id_endereco'].ToInteger;
+
+      if Req.Query.Items['cod_cidade'] <> '' then
+      end_user.COD_CIDADE := Req.Query.Items['cod_cidade'];
+
+      Res.Send(end_user.Listar).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    end_user.Free;
+  end;
+end;
+
+procedure Inserir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  end_user: TUsuarioEndereco;
+  json: TJSONObject;
+begin
+  try
+    try
+      end_user := TUsuarioEndereco.Create;
+      json := Req.Body<TJSONObject>;
+
+      with end_user do
+      begin
+        ID_USUARIO := GetUserRequest(Req);
+        ENDERECO := json.GetValue<string>('endereco', '');
+        COMPLEMENTO := json.GetValue<string>('complemento', '');
+        BAIRRO := json.GetValue<string>('bairro', '');
+        CIDADE := json.GetValue<string>('cidade', '');
+        UF := json.GetValue<string>('uf', '');
+        CEP := json.GetValue<string>('cep', '');
+        IND_PADRAO := json.GetValue<string>('ind_padrao', '');
+        COD_CIDADE := json.GetValue<string>('cod_cidade', '');
+
+        Inserir;
+      end;
+
+      Res.Send<TJSONObject>(CreateJsonObj('id_endereco', end_user.ID_ENDERECO)).Status(201);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    end_user.Free;
+  end;
+end;
+
+procedure Editar(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  end_user: TUsuarioEndereco;
+  json: TJSONObject;
+begin
+try
+  try
+    end_user := TUsuarioEndereco.Create;
+    json := Req.Body<TJSONObject>;
+
+    with end_user do
+    begin
+      ID_USUARIO := GetUserRequest(Req);
+      ENDERECO := json.GetValue<string>('endereco', '');
+      COMPLEMENTO := json.GetValue<string>('complemento', '');
+      BAIRRO := json.GetValue<string>('bairro', '');
+      CIDADE := json.GetValue<string>('cidade', '');
+      UF := json.GetValue<string>('uf', '');
+      CEP := json.GetValue<string>('cep', '');
+      COD_CIDADE := json.GetValue<string>('cod_cidade', '');
+      ID_ENDERECO := Req.Params.Items['id_endereco'].ToInteger;
+
+      Editar;
+    end;
+
+    Res.Send<TJSONObject>(CreateJsonObj('msg', 'Endereço alterado com sucesso!')).Status(200);
+
+  except on E:Exception do
+    Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+  end;
+finally
+  end_user.Free;
+end;
+end;
+
+procedure Excluir(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  end_user: TUsuarioEndereco;
+begin
+  try
+    try
+      end_user := TUsuarioEndereco.Create;
+      end_user.ID_USUARIO := GetUserRequest(Req);
+      end_user.ID_ENDERECO := Req.Params.Items['id_endereco'].ToInteger;
+
+      end_user.Excluir;
+      Res.Send<TJSONObject>(CreateJsonObj('msg', 'Endereço excluído com sucesso!')).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    end_user.Free;
+  end;
+end;
+
+procedure DefinPadrao(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  end_user: TUsuarioEndereco;
+  json: TJSONObject;
+begin
+  try
+    try
+      end_user := TUsuarioEndereco.Create;
+      json := Req.Body<TJSONObject>;
+
+      with end_user do
+      begin
+        ID_USUARIO := GetUserRequest(Req);
+        ID_ENDERECO := Req.Params.Items['id_endereco'].ToInteger;
+
+        DefinPadrao;
+      end;
+
+      Res.Send<TJSONObject>(CreateJsonObj('msg', 'Novo endereço padrão definido!')).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    end_user.Free;
+  end;
+end;
+
+end.
