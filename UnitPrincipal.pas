@@ -27,6 +27,7 @@ uses
   Horse,
   Horse.Jhonson,
   Horse.Compression,
+  Horse.CORS,
   Controller.Categoria,
   Controller.Usuario,
   Controller.Cidade,
@@ -43,6 +44,7 @@ procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
   THorse.Use(Compression());
   THorse.Use(Jhonson());
+  THorse.Use(cors);
 
   // Rotas
   Controller.Categoria.RotaAPI;
