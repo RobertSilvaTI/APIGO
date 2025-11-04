@@ -1,0 +1,130 @@
+unit Controller.Pedido;
+
+interface
+
+uses Horse,
+     Horse.JWT,
+     System.JSON,
+     System.SysUtils,
+     DAO.Pedido,
+     DAO.PedidoItem,
+     DAO.PedidoItemDetalhe,
+     Controller.Comum,
+     Controller.Auth;
+
+procedure RotaAPI;
+procedure ListarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure InserirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure AvaliarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/pedidos', ListarPedido);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Post('/v1/pedidos', InserirPedido);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Patch('/v1/pedidos/avaliacao/:id_pedido', AvaliarPedido);
+end;
+
+procedure ListarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  pedido: TPedido;
+begin
+  try
+    try
+      pedido := TPedido.Create;
+      pedido.ID_USUARIO := GetUserRequest(Req);
+
+      Res.Send<TJSONArray>(pedido.Listar('')).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    pedido.Free;
+  end;
+end;
+
+procedure InserirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  pedido: TPedido;
+  item: TPedidoItem;
+  itemdet: TPedidoItemDetalhe;
+  dados: TJSONValue;
+  arrayItem, arrayDet: TJSONArray;
+  i, x: Integer;
+begin
+  try
+    try
+      pedido := TPedido.Create;
+      pedido.StartTransaction;
+      dados := Req.Body<TJSONObject>;
+
+      // Peidido...
+      with pedido do
+      begin
+          ID_USUARIO := GetUserRequest(Req);
+          ID_ESTABELECIMENTO := dados.GetValue<integer>('id_estabelecimento', 0);
+          ID_CUPOM := dados.GetValue<integer>('id_cupom', 0);
+          VL_TAXA_ENTREGA := dados.GetValue<integer>('vl_taxa_entrega', 0);
+          VL_DESCONTO := dados.GetValue<integer>('vl_desconto', 0);
+          VL_TOTAL := dados.GetValue<integer>('vl_total', 0);
+          STATUS := 'A';
+          AVALIACAO := 0;
+          ENDERECO := dados.GetValue<string>('endereco', '');
+          COMPLEMENTO := dados.GetValue<string>('complemento', '');
+          BAIRRO := dados.GetValue<string>('bairro', '');
+          CIDADE := dados.GetValue<string>('cidade', '');
+          UF := dados.GetValue<string>('uf', '');
+          CEP := dados.GetValue<string>('cep', '');
+          COD_CIDADE := dados.GetValue<string>('cod_cidade', '');
+
+          Inserir;
+      end;
+
+      pedido.CommitTransaction;
+      Res.Send('resposta').Status(201);
+
+    except on E:Exception do
+      begin
+        pedido.RollbackTransaction;
+        Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+      end;
+    end;
+
+  finally
+    pedido.Free;
+  end;
+end;
+
+procedure AvaliarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  pedido: TPedido;
+begin
+  try
+    try
+      pedido := TPedido.Create;
+
+      if Req.Query.Items['avaliacao'] <> '' then
+      pedido.AVALIACAO := Req.Query.Items['avaliacao'].ToInteger;
+
+      pedido.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
+      pedido.Avaliar;
+
+      Res.Send<TJSONObject>(CreateJsonObj('msg', 'Avaliação enviada ao estabelecimento!')).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    pedido.Free;
+  end;
+end;
+
+end.

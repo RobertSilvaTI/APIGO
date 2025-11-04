@@ -17,7 +17,7 @@ type
       FORDEM: integer;
       procedure Validate(operacao: string);
     public
-      constructor Create;
+      constructor Create(MyConn: TFDConnection);
       destructor Destroy; override;
 
       property ID_PEDIDO_DETALHE: integer read FID_PEDIDO_DETALHE write FID_PEDIDO_DETALHE;
@@ -34,15 +34,16 @@ implementation
 
 { TPedidoItemDetalhe }
 
-constructor TPedidoItemDetalhe.Create;
+constructor TPedidoItemDetalhe.Create(MyConn: TFDConnection);
 begin
-  FConn := TConnection.CreateConnection;
+//  FConn := TConnection.CreateConnection;
+  FConn := MyConn;
 end;
 
 destructor TPedidoItemDetalhe.Destroy;
 begin
-  if Assigned(FConn) then
-    FConn.Free;
+//  if Assigned(FConn) then
+//    FConn.Free;
   inherited;
 end;
 
@@ -71,7 +72,7 @@ begin
       ParamByName('ordem').Value := ORDEM;
 
       Active := True;
-      ID_PEDIDO_DETALHE := FieldByName('id_pedio_detalhe').AsInteger;
+      ID_PEDIDO_DETALHE := FieldByName('id_pedido_detalhe').AsInteger;
     end;
 
   finally

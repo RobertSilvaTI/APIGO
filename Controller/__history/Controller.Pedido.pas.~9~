@@ -1,0 +1,131 @@
+unit Controller.Pedido;
+
+interface
+
+uses Horse,
+     Horse.JWT,
+     System.JSON,
+     System.SysUtils,
+     DAO.Pedido,
+     DAO.PedidoItem,
+     DAO.PedidoItemDetalhe,
+     Controller.Comum,
+     Controller.Auth;
+
+procedure RotaAPI;
+procedure ListarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure InserirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure AvaliarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+
+implementation
+
+procedure RotaAPI;
+begin
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Get('/v1/pedidos/:cod_cidade', ListarPedido);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Post('/v1/pedidos', InserirPedido);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Patch('/v1/pedidos/avaliacao/:id_pedido', AvaliarPedido);
+end;
+
+procedure ListarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  pedido: TPedido;
+  cod_cidade: string;
+begin
+  try
+    try
+      pedido := TPedido.Create;
+      pedido.ID_USUARIO := GetUserRequest(Req);
+      cod_cidade := Req.Params.Items['cod_cidade'];
+
+      Res.Send<TJSONArray>(pedido.Listar(cod_cidade)).Status(200);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    pedido.Free;
+  end;
+end;
+
+procedure InserirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  pedido: TPedido;
+//  item: TPedidoItem;
+//  itemdet: TPedidoItemDetalhe;
+  dados: TJSONObject;
+  valor: TJSONArray;
+  I: Integer;
+begin
+  try
+    try
+      pedido := TPedido.Create;
+
+      with pedido do
+      begin
+        dados := Req.Body<TJSONObject>;
+
+        try
+          valor := dados.GetValue('pedido') as TJSONArray;
+
+          ID_USUARIO := GetUserRequest(Req);
+          ID_ESTABELECIMENTO := valor.GetValue<integer>('id_estabelecimento', 0);
+          ID_CUPOM := valor.GetValue<integer>('id_cupom', 0);
+          VL_TAXA_ENTREGA := valor.GetValue<integer>('vl_taxa_entrega', 0);
+          VL_DESCONTO := valor.GetValue<integer>('vl_desconto', 0);
+          VL_TOTAL := valor.GetValue<integer>('vl_total', 0);
+          STATUS := valor.GetValue<string>('status', '');
+          AVALIACAO := valor.GetValue<integer>('avaliacao', 0);
+          ENDERECO := valor.GetValue<string>('endereco', '');
+          COMPLEMENTO := valor.GetValue<string>('complemento', '');
+          BAIRRO := valor.GetValue<string>('bairro', '');
+          CIDADE := valor.GetValue<string>('cidade', '');
+          UF := valor.GetValue<string>('uf', '');
+          CEP := valor.GetValue<string>('cep', '');
+          COD_CIDADE := valor.GetValue<string>('cod_cidade', '');
+
+          Inserir;
+
+        finally
+          dados.Free;
+          valor.Free;
+        end;
+      end;
+
+//      item := TPedidoItem.Create;
+//
+//      with item do
+//      begin
+//
+//      end;
+//
+//      itemdet := TPedidoItemDetalhe.Create;
+//
+//      with itemdet do
+//      begin
+//
+//      end;
+
+      Res.Send('resposta').Status(201);
+
+    except on E:Exception do
+      Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    pedido.Free;
+//    item.Free;
+//    itemdet.Free;
+  end;
+end;
+
+procedure AvaliarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+begin
+
+end;
+
+end.

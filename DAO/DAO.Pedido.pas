@@ -165,7 +165,7 @@ begin
       SQL.Add('avaliacao = (select avg(avaliacao) from tab_pedido p');
       SQL.Add('where p.avaliacao > 0 and p.id_estabelecimento = :id_estabelecimento)');
       SQL.Add('where id_estabelecimento = :id_estabelecimento');
-      ParamByName('id_estabelecimento').Value := id_estabelecimento;
+      ParamByName('id_estabelecimento').Value := ID_ESTABELECIMENTO;
       ExecSQL;
     end;
 
@@ -190,11 +190,11 @@ begin
       SQL.Clear;
       SQL.Add('insert into tab_pedido(id_usuario, id_estabelecimento, id_cupom, ');
       SQL.Add('vl_taxa_entrega, vl_desconto, vl_total, dt_pedido, status, avaliacao, endereco, ');
-      SQL.Add('complemnto, bairro, cidade, uf, cep, cod_cidade) ');
+      SQL.Add('complemento, bairro, cidade, uf, cep, cod_cidade) ');
       SQL.Add('values(:id_usuario, :id_estabelecimento, :id_cupom, :vl_taxa_entrega, ');
       SQL.Add(':vl_desconto, :vl_total, current_timestamp, :status, :avaliacao, :endereco, ');
-      SQL.Add(':complemnto, :bairro, :cidade, :uf, :cep, :cod_cidade) ');
-      SQL.Add('returnig id_pedido');
+      SQL.Add(':complemento, :bairro, :cidade, :uf, :cep, :cod_cidade) ');
+      SQL.Add('returning id_pedido');
 
       ParamByName('id_usuario').Value := ID_USUARIO;
       ParamByName('id_estabelecimento').Value := ID_ESTABELECIMENTO;

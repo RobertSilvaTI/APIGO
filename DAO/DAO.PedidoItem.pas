@@ -18,7 +18,7 @@ type
       FQTD: integer;
       procedure Validate(operacao: string);
     public
-      constructor Create;
+      constructor Create(MyConn: TFDConnection);
       destructor Destroy; override;
 
       property ID_PEDIDO_ITEM: integer read FID_PEDIDO_ITEM write FID_PEDIDO_ITEM;
@@ -36,15 +36,16 @@ implementation
 
 { TPedidoItem }
 
-constructor TPedidoItem.Create;
+constructor TPedidoItem.Create(MyConn: TFDConnection);
 begin
-  FConn := TConnection.CreateConnection;
+//  FConn := TConnection.CreateConnection;
+  FConn := MyConn;
 end;
 
 destructor TPedidoItem.Destroy;
 begin
-  if Assigned(FConn) then
-    FConn.Free;
+//  if Assigned(FConn) then
+//    FConn.Free;
   inherited;
 end;
 

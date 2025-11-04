@@ -217,6 +217,7 @@
         <DCCReference Include="Controller\Controller.EstabFavorito.pas"/>
         <DCCReference Include="Controller\Controller.Produto.pas"/>
         <DCCReference Include="Controller\Controller.UsuarioEndereco.pas"/>
+        <DCCReference Include="Controller\Controller.Pedido.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
