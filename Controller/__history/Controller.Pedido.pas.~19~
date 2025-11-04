@@ -16,7 +16,6 @@ procedure RotaAPI;
 procedure ListarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
 procedure InserirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
 procedure AvaliarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
-procedure ExcluirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
 
 implementation
 
@@ -31,9 +30,6 @@ begin
   THorse
     .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
     .Patch('/v1/pedidos/avaliacao/:id_pedido', AvaliarPedido);
-  THorse
-    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
-    .Delete('v1/pedidos/:id_pedido', ExcluirPedido);
 end;
 
 procedure ListarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
@@ -168,49 +164,6 @@ begin
 
     except on E:Exception do
       Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
-    end;
-  finally
-    pedido.Free;
-  end;
-end;
-
-procedure ExcluirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
-var
-  pedido: TPedido;
-  itens: TPedidoItem;
-  itensdet: TPedidoItemDetalhe;
-begin
-  try
-    try
-      // Dados pedido...
-      pedido := TPedido.Create;
-      pedido.StartTransaction;
-      pedido.ID_USUARIO := GetUserRequest(Req);
-      pedido.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
-      pedido.Excluir;
-
-      // detalhes dos itens do pedido...
-      itensdet := TPedidoItemDetalhe.Create(pedido.GetConnection);
-      itensdet.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
-      itensdet.Excluir;
-      itensdet.Free;
-
-      // itens do pedido...
-      itens := TPedidoItem.Create(pedido.GetConnection);
-      itens.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
-      itens.Excluir;
-      itens.Free;
-
-      pedido.CommitTransaction;
-      Res.Send<TJSONObject>(CreateJsonObj('msg', ('Pedido Nro: ' +
-                                                  pedido.ID_PEDIDO.ToString +
-                                                  ' excluído com sucesso!'))).Status(200);
-
-    except on E:Exception do
-      begin
-        pedido.RollbackTransaction;
-        Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
-      end;
     end;
   finally
     pedido.Free;

@@ -178,7 +178,6 @@ procedure ExcluirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
 var
   pedido: TPedido;
   itens: TPedidoItem;
-  itensdet: TPedidoItemDetalhe;
 begin
   try
     try
@@ -189,17 +188,10 @@ begin
       pedido.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
       pedido.Excluir;
 
-      // detalhes dos itens do pedido...
-      itensdet := TPedidoItemDetalhe.Create(pedido.GetConnection);
-      itensdet.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
-      itensdet.Excluir;
-      itensdet.Free;
-
       // itens do pedido...
       itens := TPedidoItem.Create(pedido.GetConnection);
       itens.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
       itens.Excluir;
-      itens.Free;
 
       pedido.CommitTransaction;
       Res.Send<TJSONObject>(CreateJsonObj('msg', ('Pedido Nro: ' +

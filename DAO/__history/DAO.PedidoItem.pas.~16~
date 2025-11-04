@@ -30,7 +30,6 @@ type
       property VL_TOTAL: double read FVL_TOTAL write FVL_TOTAL;
 
       procedure Inserir;
-      procedure Excluir;
   end;
 
 implementation
@@ -85,32 +84,9 @@ begin
   end;
 end;
 
-procedure TPedidoItem.Excluir;
-var
-  qry: TFDQuery;
-begin
-  Validate('Excluir');
-
-  try
-    qry := TFDQuery.Create(nil);
-    qry.Connection := FConn;
-
-    with qry do
-    begin
-      Active := False;
-      SQL.Clear;
-      SQL.Add('delete from tab_pedido_item where id_pedido = :id_pedido');
-      ParamByName('id_pedido').Value := ID_PEDIDO;
-      ExecSQL;
-    end;
-  finally
-    qry.Free;
-  end;
-end;
-
 procedure TPedidoItem.Validate(operacao: string);
 begin
-  if (ID_PEDIDO <= 0) and MatchStr(operacao, ['Inserir', 'Excluir'])  then
+  if (ID_PEDIDO <= 0) and MatchStr(operacao, ['Inserir'])  then
     raise Exception.Create('ID do pedido não informado!');
 
   if (ID_PRODUTO <= 0) and MatchStr(operacao, ['Inserir'])  then

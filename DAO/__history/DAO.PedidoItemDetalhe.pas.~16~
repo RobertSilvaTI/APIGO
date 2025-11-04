@@ -2,49 +2,51 @@ unit DAO.PedidoItemDetalhe;
 
 interface
 
-uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, System.JSON, System.SysUtils,
+uses FireDAC.Comp.Client, FireDAC.DApt, FireDAC.Stan.Param, Data.DB, System.JSON, System.SysUtils,
 System.StrUtils, DataSet.Serialize, DAO.Connection;
 
 type
   TPedidoItemDetalhe = class
     private
       FConn: TFDConnection;
-      FQTD: integer;
       FVL_ITEM: double;
       FID_PEDIDO_ITEM: integer;
       FID_PEDIDO_DETALHE: integer;
       FID_ITEM: integer;
       FNOME: string;
       FORDEM: integer;
+      FID_PEDIDO: integer;
       procedure Validate(operacao: string);
     public
-      constructor Create;
+      constructor Create(MyConn: TFDConnection);
       destructor Destroy; override;
 
       property ID_PEDIDO_DETALHE: integer read FID_PEDIDO_DETALHE write FID_PEDIDO_DETALHE;
       property ID_PEDIDO_ITEM: integer read FID_PEDIDO_ITEM write FID_PEDIDO_ITEM;
       property ID_ITEM: integer read FID_ITEM write FID_ITEM;
       property ORDEM: integer read FORDEM write FORDEM;
-      property QTD: integer read FQTD write FQTD;
       property VL_ITEM: double read FVL_ITEM write FVL_ITEM;
       property NOME: string read FNOME write FNOME;
+      property ID_PEDIDO: integer read FID_PEDIDO write FID_PEDIDO;
 
       procedure Inserir;
+      procedure Excluir;
   end;
 
 implementation
 
 { TPedidoItemDetalhe }
 
-constructor TPedidoItemDetalhe.Create;
+constructor TPedidoItemDetalhe.Create(MyConn: TFDConnection);
 begin
-  FConn := TConnection.CreateConnection;
+//  FConn := TConnection.CreateConnection;
+  FConn := MyConn;
 end;
 
 destructor TPedidoItemDetalhe.Destroy;
 begin
-  if Assigned(FConn) then
-    FConn.Free;
+//  if Assigned(FConn) then
+//    FConn.Free;
   inherited;
 end;
 
@@ -73,7 +75,7 @@ begin
       ParamByName('ordem').Value := ORDEM;
 
       Active := True;
-      ID_PEDIDO_DETALHE := FieldByName('id_pedio_detalhe').AsInteger;
+      ID_PEDIDO_DETALHE := FieldByName('id_pedido_detalhe').AsInteger;
     end;
 
   finally
@@ -81,9 +83,46 @@ begin
   end;
 end;
 
+procedure TPedidoItemDetalhe.Excluir;
+var
+  qry: TFDQuery;
+begin
+  Validate('Excluir');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      SQL.Clear;
+      SQL.Add('delete from tab_pedido_item_detalhe where id_pedido_item in ');
+      SQL.Add(' (select list(id_pedido_item) from tab_pedido_item ');
+      SQL.Add(' where id_pedido = :id_pedido)');
+      ParamByName('id_pedido').Value := ID_PEDIDO;
+      ExecSQL;
+    end;
+  finally
+    qry.Free;
+  end;
+end;
+
 procedure TPedidoItemDetalhe.Validate(operacao: string);
 begin
+  if (ID_PEDIDO_ITEM <= 0) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('ID do pedido item não informado!');
 
+  if (ID_ITEM <= 0) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('ID do item não informado!');
+
+  if (NOME.IsEmpty) and MatchStr(operacao, ['Inserir'])  then
+    raise Exception.Create('Nome não informado!');
+
+  if (ORDEM <= 0) and MatchStr(operacao, ['Inserir']) then
+    raise Exception.Create('Ordem não informada!');
+
+  if (ID_PEDIDO <= 0) and MatchStr(operacao, ['Excluir']) then
+    raise Exception.Create('ID do pedido não informado!');
 end;
 
 end.

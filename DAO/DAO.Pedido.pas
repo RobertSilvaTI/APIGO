@@ -54,6 +54,7 @@ type
       function GetConnection: TFDConnection;
       procedure Avaliar;
       procedure Inserir;
+      procedure Excluir;
 
       procedure StartTransaction;
       procedure RollbackTransaction;
@@ -233,9 +234,33 @@ begin
   end;
 end;
 
+procedure TPedido.Excluir;
+var
+  qry: TFDQuery;
+begin
+  Validate('Excluir');
+
+  try
+    qry := TFDQuery.Create(nil);
+    qry.Connection := FConn;
+
+    with qry do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('delete from tab_pedido where id_pedido = :id_pedido and id_usuario = :id_usuario');
+      ParamByName('id_pedido').Value := ID_PEDIDO;
+      ParamByName('id_usuario').Value := ID_USUARIO;
+      ExecSQL;
+    end;
+  finally
+    qry.Free;
+  end;
+end;
+
 procedure TPedido.Validate(operacao: string);
 begin
-  if (ID_USUARIO <= 0) and MatchStr(operacao, ['Listar']) then
+  if (ID_USUARIO <= 0) and MatchStr(operacao, ['Listar', 'Excluir']) then
     raise Exception.Create('ID de usuário não informado!');
 
   if (ID_ESTABELECIMENTO <= 0) and MatchStr(operacao, ['Inserir']) then
@@ -265,7 +290,7 @@ begin
   if (AVALIACAO <= 0) and MatchStr(operacao, ['Avaliar']) then
     raise Exception.Create('Avaliação não inserida!');
 
-  if (ID_PEDIDO <= 0) and MatchStr(operacao, ['Avaliar']) then
+  if (ID_PEDIDO <= 0) and MatchStr(operacao, ['Avaliar', 'Excluir']) then
     raise Exception.Create('ID do pedido não informado!');
 end;
 

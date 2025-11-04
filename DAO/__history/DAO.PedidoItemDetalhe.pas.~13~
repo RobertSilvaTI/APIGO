@@ -15,7 +15,6 @@ type
       FID_ITEM: integer;
       FNOME: string;
       FORDEM: integer;
-      FID_PEDIDO: integer;
       procedure Validate(operacao: string);
     public
       constructor Create(MyConn: TFDConnection);
@@ -27,7 +26,6 @@ type
       property ORDEM: integer read FORDEM write FORDEM;
       property VL_ITEM: double read FVL_ITEM write FVL_ITEM;
       property NOME: string read FNOME write FNOME;
-      property ID_PEDIDO: integer read FID_PEDIDO write FID_PEDIDO;
 
       procedure Inserir;
       procedure Excluir;
@@ -86,6 +84,7 @@ end;
 procedure TPedidoItemDetalhe.Excluir;
 var
   qry: TFDQuery;
+  ID_PEDIDO: integer;
 begin
   Validate('Excluir');
 
@@ -97,11 +96,10 @@ begin
     begin
       Active := False;
       SQL.Clear;
-        SQL.Text :=
-          'delete from tab_pedido_item_detalhe ' +
-          'where id_pedido_item in ' +
-          '  (select id_pedido_item from tab_pedido_item where id_pedido = :id_pedido) ';
-        ParamByName('id_pedido').Value := ID_PEDIDO;
+      SQL.Add('delete from tab_pedido_item_detalhe where id_pedido_item in ');
+      SQL.Add(' (select list(id_pedido_item) as id_pedido_item from tab_pedido_item ');
+      SQL.Add(' where id_pedido = :id_pedido)');
+      ParamByName('id_pedido').Value := ID_PEDIDO;
       ExecSQL;
     end;
   finally
@@ -122,9 +120,6 @@ begin
 
   if (ORDEM <= 0) and MatchStr(operacao, ['Inserir']) then
     raise Exception.Create('Ordem não informada!');
-
-  if (ID_PEDIDO <= 0) and MatchStr(operacao, ['Excluir']) then
-    raise Exception.Create('ID do pedido não informado!');
 end;
 
 end.

@@ -16,6 +16,7 @@ procedure RotaAPI;
 procedure ListarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
 procedure InserirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
 procedure AvaliarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+procedure ExcluirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
 
 implementation
 
@@ -30,6 +31,9 @@ begin
   THorse
     .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
     .Patch('/v1/pedidos/avaliacao/:id_pedido', AvaliarPedido);
+  THorse
+    .AddCallback(HorseJWT(SECRET, THorseJWTConfig.New.SessionClass(TAuth)))
+    .Delete('v1/pedidos/:id_pedido', ExcluirPedido);
 end;
 
 procedure ListarPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
@@ -72,9 +76,9 @@ begin
           ID_USUARIO := GetUserRequest(Req);
           ID_ESTABELECIMENTO := dados.GetValue<integer>('id_estabelecimento', 0);
           ID_CUPOM := dados.GetValue<integer>('id_cupom', 0);
-          VL_TAXA_ENTREGA := dados.GetValue<integer>('vl_taxa_entrega', 0);
-          VL_DESCONTO := dados.GetValue<integer>('vl_desconto', 0);
-          VL_TOTAL := dados.GetValue<integer>('vl_total', 0);
+          VL_TAXA_ENTREGA := dados.GetValue<double>('vl_taxa_entrega', 0);
+          VL_DESCONTO := dados.GetValue<double>('vl_desconto', 0);
+          VL_TOTAL := dados.GetValue<double>('vl_total', 0);
           STATUS := 'A';
           AVALIACAO := 0;
           ENDERECO := dados.GetValue<string>('endereco', '');
@@ -85,7 +89,7 @@ begin
           CEP := dados.GetValue<string>('cep', '');
           COD_CIDADE := dados.GetValue<string>('cod_cidade', '');
 
-          arrayItem := dados.GetValue<TJSONArray>('itens');
+          arrayItem := dados.GetValue<TJSONArray>('itens'); // captura os itens do body...
 
           Inserir;
       end;
@@ -103,30 +107,30 @@ begin
           item.VL_UNIT := arrayItem.Get(x).GetValue<double>('vl_unit', 0);
           item.VL_TOTAL := arrayItem.GetValue<double>('vl_total', 0);
 
-          arrayDet := dados.GetValue<TJSONArray>('opcoes');
-
           item.Inserir;
+
+          // Opções Itens...
+          arrayDet := arrayItem.Get(x).GetValue<TJSONArray>('detalhes'); // captura as opções do body...
+
+          try
+            itemdet := TPedidoItemDetalhe.Create(pedido.GetConnection);
+
+            for I := 0 to arrayDet.Count - 1 do
+            begin
+              itemdet.ID_PEDIDO_ITEM := item.ID_PEDIDO_ITEM;
+              itemdet.NOME := arrayDet.Get(i).GetValue<string>('nome', '');
+              itemdet.ID_ITEM := arrayDet.Get(i).GetValue<integer>('id_item', 0);
+              itemdet.VL_ITEM := arrayDet.Get(i).GetValue<double>('vl_item', 0);
+              itemdet.ORDEM := arrayDet.Get(i).GetValue<integer>('ordem', 0);
+
+              itemdet.Inserir;
+            end;
+          finally
+            itemdet.Free;
+          end;
         end;
       finally
         item.Free;
-      end;
-
-      // Opções Itens...
-      try
-        itemdet := TPedidoItemDetalhe.Create(pedido.GetConnection);
-
-        for I := 0 to arrayDet.Count - 1 do
-        begin
-          itemdet.ID_PEDIDO_ITEM := item.ID_PEDIDO_ITEM;
-          itemdet.NOME := arrayDet.Get(i).GetValue<string>('nome', '');
-          itemdet.ID_ITEM := arrayDet.Get(i).GetValue<integer>('id_item', 0);
-          itemdet.VL_ITEM := arrayDet.Get(i).GetValue<double>('vl_item', 0);
-          itemdet.ORDEM := arrayDet.Get(i).GetValue<integer>('ordem', 0);
-
-          itemdet.Inserir;
-        end;
-      finally
-        itemdet.Free;
       end;
 
       pedido.CommitTransaction;
@@ -164,6 +168,47 @@ begin
 
     except on E:Exception do
       Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+    end;
+  finally
+    pedido.Free;
+  end;
+end;
+
+procedure ExcluirPedido(Req: THorseRequest; Res: THorseResponse; Next: TProc);
+var
+  pedido: TPedido;
+  itens: TPedidoItem;
+  itensdet: TPedidoItemDetalhe;
+begin
+  try
+    try
+      // Dados pedido...
+      pedido := TPedido.Create;
+      pedido.StartTransaction;
+      pedido.ID_USUARIO := GetUserRequest(Req);
+      pedido.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
+      pedido.Excluir;
+
+      // detalhes dos itens do pedido...
+      itensdet := TPedidoItemDetalhe.Create(pedido.GetConnection);
+      itensdet.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
+      itensdet.Excluir;
+
+      // itens do pedido...
+      itens := TPedidoItem.Create(pedido.GetConnection);
+      itens.ID_PEDIDO := Req.Params.Items['id_pedido'].ToInteger;
+      itens.Excluir;
+
+      pedido.CommitTransaction;
+      Res.Send<TJSONObject>(CreateJsonObj('msg', ('Pedido Nro: ' +
+                                                  pedido.ID_PEDIDO.ToString +
+                                                  ' excluído com sucesso!'))).Status(200);
+
+    except on E:Exception do
+      begin
+        pedido.RollbackTransaction;
+        Res.Send<TJSONObject>(CreateJsonObj('erro', E.Message)).Status(500);
+      end;
     end;
   finally
     pedido.Free;

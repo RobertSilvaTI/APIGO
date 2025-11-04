@@ -99,8 +99,8 @@ begin
       SQL.Clear;
         SQL.Text :=
           'delete from tab_pedido_item_detalhe ' +
-          'where id_pedido_item in ' +
-          '  (select id_pedido_item from tab_pedido_item where id_pedido = :id_pedido) ';
+          'where id_pedido_item in (' +
+          '  select id_pedido_item from tab_pedido_item where id_pedido = :id_pedido)';
         ParamByName('id_pedido').Value := ID_PEDIDO;
       ExecSQL;
     end;
